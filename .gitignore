@@ -33,6 +33,13 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# iOS build artifacts
+ios/Build/
+ios/Podfile.lock
+
+# Claude Code
+.claude/
+
 # Symbolication related
 app.*.symbols
 
