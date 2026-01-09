@@ -3,6 +3,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/app_constants.dart';
 
 part 'database.g.dart';
 
@@ -15,6 +17,11 @@ class Pregnancies extends Table {
   TextColumn get doctorName => text().nullable()();
   TextColumn get hospitalName => text().nullable()();
   TextColumn get notes => text().nullable()();
+  TextColumn get babyName => text().nullable()();
+  IntColumn get status => integer().withDefault(const Constant(0))(); // 0=active, 1=completed, 2=archived
+  IntColumn get deliveryDate => integer().nullable()();
+  IntColumn get babyWeightGrams => integer().nullable()();
+  TextColumn get babyGender => text().nullable()(); // 'male', 'female', 'unknown'
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
 
@@ -25,6 +32,7 @@ class Pregnancies extends Table {
 // Visits Table
 class Visits extends Table {
   TextColumn get id => text()();
+  TextColumn get pregnancyId => text().references(Pregnancies, #id)();
   IntColumn get visitDate => integer()();
   RealColumn get weightKg => real().nullable()();
   IntColumn get bloodPressureSystolic => integer().nullable()();
@@ -34,6 +42,7 @@ class Visits extends Table {
   IntColumn get nextAppointmentDate => integer().nullable()();
   TextColumn get nextAppointmentNotes => text().nullable()();
   IntColumn get pregnancyWeekAtVisit => integer().nullable()();
+  IntColumn get mood => integer().nullable()(); // Maps to MoodType enum
   IntColumn get createdAt => integer()();
   IntColumn get updatedAt => integer()();
 
@@ -44,6 +53,7 @@ class Visits extends Table {
 // Medications Table
 class Medications extends Table {
   TextColumn get id => text()();
+  TextColumn get pregnancyId => text().references(Pregnancies, #id)();
   TextColumn get name => text()();
   TextColumn get dosage => text().nullable()();
   IntColumn get frequency => integer()();
@@ -64,6 +74,7 @@ class Medications extends Table {
 // Lab Results Table
 class LabResults extends Table {
   TextColumn get id => text()();
+  TextColumn get pregnancyId => text().references(Pregnancies, #id)();
   TextColumn get title => text()();
   IntColumn get type => integer()();
   IntColumn get testDate => integer()();
@@ -81,6 +92,7 @@ class LabResults extends Table {
 // Ultrasound Images Table
 class UltrasoundImages extends Table {
   TextColumn get id => text()();
+  TextColumn get pregnancyId => text().references(Pregnancies, #id)();
   TextColumn get imagePath => text()();
   IntColumn get imageDate => integer()();
   IntColumn get pregnancyWeek => integer().nullable()();
@@ -97,6 +109,7 @@ class UltrasoundImages extends Table {
 // Appointments Table
 class Appointments extends Table {
   TextColumn get id => text()();
+  TextColumn get pregnancyId => text().references(Pregnancies, #id)();
   IntColumn get appointmentDate => integer()();
   TextColumn get purpose => text().nullable()();
   TextColumn get location => text().nullable()();
@@ -123,7 +136,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
@@ -132,14 +145,74 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        // Handle future migrations here
+        if (from < 2) {
+          // Migration from v1 to v2: Add pregnancyId to all related tables and mood to visits
+          // Add new columns to pregnancies table
+          await m.addColumn(pregnancies, pregnancies.babyName);
+          await m.addColumn(pregnancies, pregnancies.status);
+          await m.addColumn(pregnancies, pregnancies.deliveryDate);
+          await m.addColumn(pregnancies, pregnancies.babyWeightGrams);
+          await m.addColumn(pregnancies, pregnancies.babyGender);
+
+          // Add pregnancyId and mood to visits table
+          await m.addColumn(visits, visits.pregnancyId);
+          await m.addColumn(visits, visits.mood);
+
+          // Add pregnancyId to other tables
+          await m.addColumn(medications, medications.pregnancyId);
+          await m.addColumn(labResults, labResults.pregnancyId);
+          await m.addColumn(ultrasoundImages, ultrasoundImages.pregnancyId);
+          await m.addColumn(appointments, appointments.pregnancyId);
+
+          // Migrate existing data: assign all records to the first pregnancy
+          final prefs = await SharedPreferences.getInstance();
+          final activePregnancyId = prefs.getString(AppConstants.prefActivePregnancyId);
+
+          if (activePregnancyId != null) {
+            await customStatement(
+              'UPDATE visits SET pregnancy_id = ? WHERE pregnancy_id IS NULL',
+              [activePregnancyId],
+            );
+            await customStatement(
+              'UPDATE medications SET pregnancy_id = ? WHERE pregnancy_id IS NULL',
+              [activePregnancyId],
+            );
+            await customStatement(
+              'UPDATE lab_results SET pregnancy_id = ? WHERE pregnancy_id IS NULL',
+              [activePregnancyId],
+            );
+            await customStatement(
+              'UPDATE ultrasound_images SET pregnancy_id = ? WHERE pregnancy_id IS NULL',
+              [activePregnancyId],
+            );
+            await customStatement(
+              'UPDATE appointments SET pregnancy_id = ? WHERE pregnancy_id IS NULL',
+              [activePregnancyId],
+            );
+          }
+        }
       },
     );
   }
 
   // Pregnancy operations
-  Future<List<Pregnancy>> getAllPregnancies() => select(pregnancies).get();
+  Future<List<Pregnancy>> getAllPregnancies() {
+    return (select(pregnancies)..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).get();
+  }
 
+  Stream<List<Pregnancy>> watchAllPregnancies() {
+    return (select(pregnancies)..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).watch();
+  }
+
+  Future<Pregnancy?> getPregnancyById(String id) {
+    return (select(pregnancies)..where((t) => t.id.equals(id))).getSingleOrNull();
+  }
+
+  Stream<Pregnancy?> watchPregnancyById(String id) {
+    return (select(pregnancies)..where((t) => t.id.equals(id))).watchSingleOrNull();
+  }
+
+  // Legacy methods for backwards compatibility (will be removed later)
   Stream<Pregnancy?> watchActivePregnancy() {
     return (select(pregnancies)..limit(1)).watchSingleOrNull();
   }
@@ -156,13 +229,25 @@ class AppDatabase extends _$AppDatabase {
     return update(pregnancies).replace(pregnancy);
   }
 
-  // Visit operations
-  Future<List<Visit>> getAllVisits() {
-    return (select(visits)..orderBy([(t) => OrderingTerm.desc(t.visitDate)])).get();
+  Future<int> deletePregnancy(String id) {
+    return (delete(pregnancies)..where((t) => t.id.equals(id))).go();
   }
 
-  Stream<List<Visit>> watchAllVisits() {
-    return (select(visits)..orderBy([(t) => OrderingTerm.desc(t.visitDate)])).watch();
+  // Visit operations
+  Future<List<Visit>> getAllVisits({String? pregnancyId}) {
+    final query = select(visits)..orderBy([(t) => OrderingTerm.desc(t.visitDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.get();
+  }
+
+  Stream<List<Visit>> watchAllVisits({String? pregnancyId}) {
+    final query = select(visits)..orderBy([(t) => OrderingTerm.desc(t.visitDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.watch();
   }
 
   Future<Visit?> getVisitById(String id) {
@@ -182,16 +267,28 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // Medication operations
-  Future<List<Medication>> getAllMedications() {
-    return select(medications).get();
+  Future<List<Medication>> getAllMedications({String? pregnancyId}) {
+    final query = select(medications);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.get();
   }
 
-  Future<List<Medication>> getActiveMedications() {
-    return (select(medications)..where((t) => t.isActive.equals(true))).get();
+  Future<List<Medication>> getActiveMedications({String? pregnancyId}) {
+    final query = select(medications)..where((t) => t.isActive.equals(true));
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.get();
   }
 
-  Stream<List<Medication>> watchActiveMedications() {
-    return (select(medications)..where((t) => t.isActive.equals(true))).watch();
+  Stream<List<Medication>> watchActiveMedications({String? pregnancyId}) {
+    final query = select(medications)..where((t) => t.isActive.equals(true));
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.watch();
   }
 
   Future<int> insertMedication(MedicationsCompanion medication) {
@@ -207,12 +304,20 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // Lab Result operations
-  Future<List<LabResult>> getAllLabResults() {
-    return (select(labResults)..orderBy([(t) => OrderingTerm.desc(t.testDate)])).get();
+  Future<List<LabResult>> getAllLabResults({String? pregnancyId}) {
+    final query = select(labResults)..orderBy([(t) => OrderingTerm.desc(t.testDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.get();
   }
 
-  Stream<List<LabResult>> watchAllLabResults() {
-    return (select(labResults)..orderBy([(t) => OrderingTerm.desc(t.testDate)])).watch();
+  Stream<List<LabResult>> watchAllLabResults({String? pregnancyId}) {
+    final query = select(labResults)..orderBy([(t) => OrderingTerm.desc(t.testDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.watch();
   }
 
   Future<List<LabResult>> getLabResultsByVisit(String visitId) {
@@ -232,12 +337,20 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // Ultrasound operations
-  Future<List<UltrasoundImage>> getAllUltrasounds() {
-    return (select(ultrasoundImages)..orderBy([(t) => OrderingTerm.desc(t.imageDate)])).get();
+  Future<List<UltrasoundImage>> getAllUltrasounds({String? pregnancyId}) {
+    final query = select(ultrasoundImages)..orderBy([(t) => OrderingTerm.desc(t.imageDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.get();
   }
 
-  Stream<List<UltrasoundImage>> watchAllUltrasounds() {
-    return (select(ultrasoundImages)..orderBy([(t) => OrderingTerm.desc(t.imageDate)])).watch();
+  Stream<List<UltrasoundImage>> watchAllUltrasounds({String? pregnancyId}) {
+    final query = select(ultrasoundImages)..orderBy([(t) => OrderingTerm.desc(t.imageDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.watch();
   }
 
   Future<List<UltrasoundImage>> getUltrasoundsByVisit(String visitId) {
@@ -253,33 +366,46 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // Appointment operations
-  Future<List<Appointment>> getAllAppointments() {
-    return (select(appointments)..orderBy([(t) => OrderingTerm.asc(t.appointmentDate)])).get();
+  Future<List<Appointment>> getAllAppointments({String? pregnancyId}) {
+    final query = select(appointments)..orderBy([(t) => OrderingTerm.asc(t.appointmentDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.get();
   }
 
-  Future<List<Appointment>> getUpcomingAppointments() {
+  Future<List<Appointment>> getUpcomingAppointments({String? pregnancyId}) {
     final now = DateTime.now().millisecondsSinceEpoch;
-    return (select(appointments)
+    final query = select(appointments)
       ..where((t) => t.appointmentDate.isBiggerOrEqualValue(now))
-      ..orderBy([(t) => OrderingTerm.asc(t.appointmentDate)]))
-      .get();
+      ..orderBy([(t) => OrderingTerm.asc(t.appointmentDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.get();
   }
 
-  Stream<List<Appointment>> watchUpcomingAppointments() {
+  Stream<List<Appointment>> watchUpcomingAppointments({String? pregnancyId}) {
     final now = DateTime.now().millisecondsSinceEpoch;
-    return (select(appointments)
+    final query = select(appointments)
       ..where((t) => t.appointmentDate.isBiggerOrEqualValue(now))
-      ..orderBy([(t) => OrderingTerm.asc(t.appointmentDate)]))
-      .watch();
+      ..orderBy([(t) => OrderingTerm.asc(t.appointmentDate)]);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.watch();
   }
 
-  Future<Appointment?> getNextAppointment() {
+  Future<Appointment?> getNextAppointment({String? pregnancyId}) {
     final now = DateTime.now().millisecondsSinceEpoch;
-    return (select(appointments)
+    final query = select(appointments)
       ..where((t) => t.appointmentDate.isBiggerOrEqualValue(now))
       ..orderBy([(t) => OrderingTerm.asc(t.appointmentDate)])
-      ..limit(1))
-      .getSingleOrNull();
+      ..limit(1);
+    if (pregnancyId != null) {
+      query.where((t) => t.pregnancyId.equals(pregnancyId));
+    }
+    return query.getSingleOrNull();
   }
 
   Future<int> insertAppointment(AppointmentsCompanion appointment) {

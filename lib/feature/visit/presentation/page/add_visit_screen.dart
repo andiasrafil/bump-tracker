@@ -11,6 +11,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/helpers/pregnancy_calculator.dart';
 import '../../../../core/helpers/file_helper.dart';
+import '../../../../widgets/mood_picker.dart';
 
 class AddVisitScreen extends StatefulWidget {
   const AddVisitScreen({super.key});
@@ -36,6 +37,12 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
   // Ultrasound images
   final List<File> _selectedImages = [];
 
+  // Mood tracking
+  int? _selectedMood;
+
+  // Pregnancy tracking
+  String? _activePregnancyId;
+
   bool _isLoading = false;
   int? _currentPregnancyWeek;
 
@@ -49,8 +56,8 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
     final prefs = await SharedPreferences.getInstance();
     final pregnancyId = prefs.getString(AppConstants.prefActivePregnancyId);
     if (pregnancyId != null) {
-      final pregnancies = await _db.getAllPregnancies();
-      final pregnancy = pregnancies.firstWhereOrNull((p) => p.id == pregnancyId);
+      _activePregnancyId = pregnancyId;
+      final pregnancy = await _db.getPregnancyById(pregnancyId);
       if (pregnancy?.lastMenstrualPeriod != null) {
         final lmp = DateTime.fromMillisecondsSinceEpoch(pregnancy!.lastMenstrualPeriod!);
         final weekInfo = PregnancyCalculator.calculateWeekAtDate(lmp, _visitDate);
@@ -172,6 +179,7 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
       // Save the visit
       await _db.insertVisit(VisitsCompanion(
         id: drift.Value(visitId),
+        pregnancyId: drift.Value(_activePregnancyId ?? ''),
         visitDate: drift.Value(_visitDate.millisecondsSinceEpoch),
         weightKg: drift.Value(_weightController.text.isNotEmpty
             ? double.tryParse(_weightController.text)
@@ -194,6 +202,7 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
                 ? _nextAppointmentNotesController.text
                 : null),
         pregnancyWeekAtVisit: drift.Value(_currentPregnancyWeek),
+        mood: drift.Value(_selectedMood),
         createdAt: drift.Value(now),
         updatedAt: drift.Value(now),
       ));
@@ -203,6 +212,7 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
         final savedPath = await FileHelper.saveUltrasoundImage(image);
         await _db.insertUltrasound(UltrasoundImagesCompanion(
           id: drift.Value(uuid.v4()),
+          pregnancyId: drift.Value(_activePregnancyId ?? ''),
           imagePath: drift.Value(savedPath),
           imageDate: drift.Value(_visitDate.millisecondsSinceEpoch),
           pregnancyWeek: drift.Value(_currentPregnancyWeek),
@@ -308,6 +318,16 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
                     ],
                   ),
                 ),
+              ),
+
+              SizedBox(height: 24.h),
+
+              // Mood Section
+              _buildSectionTitle('How are you feeling?'),
+              SizedBox(height: 12.h),
+              MoodPicker(
+                selectedMood: _selectedMood,
+                onMoodSelected: (mood) => setState(() => _selectedMood = mood),
               ),
 
               SizedBox(height: 24.h),

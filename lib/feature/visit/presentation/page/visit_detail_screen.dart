@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/database/database.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../../widgets/mood_picker.dart';
 
 class VisitDetailScreen extends StatelessWidget {
   final String visitId;
@@ -68,6 +69,23 @@ class VisitDetailScreen extends StatelessWidget {
                   value: DateFormat('EEEE, MMMM d, y').format(visitDate),
                   color: AppColors.primary,
                 ),
+
+                // Mood Section
+                if (visit.mood != null) ...[
+                  SizedBox(height: 16.h),
+                  Text(
+                    'How I was feeling',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  MoodDisplay(
+                    moodIndex: visit.mood!,
+                    size: 40,
+                  ),
+                ],
 
                 SizedBox(height: 16.h),
 

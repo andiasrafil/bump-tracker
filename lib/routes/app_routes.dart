@@ -12,7 +12,9 @@ abstract class AppRoutes {
   static const labResultDetail = '/lab-result-detail';
   static const medications = '/medications';
   static const addMedication = '/add-medication';
+  static const pregnancyList = '/pregnancy-list';
   static const pregnancyProfile = '/pregnancy-profile';
+  static const addPregnancy = '/add-pregnancy';
   static const editPregnancyProfile = '/edit-pregnancy-profile';
   static const statistics = '/statistics';
   static const settings = '/settings';

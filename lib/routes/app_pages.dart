@@ -11,6 +11,9 @@ import '../feature/medication/presentation/page/medication_list_screen.dart';
 import '../feature/ultrasound/presentation/page/ultrasound_gallery_screen.dart';
 import '../feature/settings/presentation/page/settings_screen.dart';
 import '../feature/statistics/presentation/page/statistics_screen.dart';
+import '../feature/pregnancy_profile/presentation/page/pregnancy_list_screen.dart';
+import '../feature/pregnancy_profile/presentation/page/pregnancy_profile_screen.dart';
+import '../feature/pregnancy_profile/presentation/page/add_pregnancy_screen.dart';
 import '../core/database/database.dart';
 
 class AppPages {
@@ -64,6 +67,21 @@ class AppPages {
     GetPage(
       name: AppRoutes.statistics,
       page: () => const StatisticsScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.pregnancyList,
+      page: () => const PregnancyListScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.pregnancyProfile,
+      page: () {
+        final pregnancyId = Get.arguments as String;
+        return PregnancyProfileScreen(pregnancyId: pregnancyId);
+      },
+    ),
+    GetPage(
+      name: AppRoutes.addPregnancy,
+      page: () => const AddPregnancyScreen(),
     ),
   ];
 }

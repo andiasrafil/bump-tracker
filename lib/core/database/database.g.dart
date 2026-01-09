@@ -81,6 +81,60 @@ class $PregnanciesTable extends Pregnancies
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _babyNameMeta = const VerificationMeta(
+    'babyName',
+  );
+  @override
+  late final GeneratedColumn<String> babyName = GeneratedColumn<String>(
+    'baby_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<int> status = GeneratedColumn<int>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _deliveryDateMeta = const VerificationMeta(
+    'deliveryDate',
+  );
+  @override
+  late final GeneratedColumn<int> deliveryDate = GeneratedColumn<int>(
+    'delivery_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _babyWeightGramsMeta = const VerificationMeta(
+    'babyWeightGrams',
+  );
+  @override
+  late final GeneratedColumn<int> babyWeightGrams = GeneratedColumn<int>(
+    'baby_weight_grams',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _babyGenderMeta = const VerificationMeta(
+    'babyGender',
+  );
+  @override
+  late final GeneratedColumn<String> babyGender = GeneratedColumn<String>(
+    'baby_gender',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -112,6 +166,11 @@ class $PregnanciesTable extends Pregnancies
     doctorName,
     hospitalName,
     notes,
+    babyName,
+    status,
+    deliveryDate,
+    babyWeightGrams,
+    babyGender,
     createdAt,
     updatedAt,
   ];
@@ -177,6 +236,42 @@ class $PregnanciesTable extends Pregnancies
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
     }
+    if (data.containsKey('baby_name')) {
+      context.handle(
+        _babyNameMeta,
+        babyName.isAcceptableOrUnknown(data['baby_name']!, _babyNameMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('delivery_date')) {
+      context.handle(
+        _deliveryDateMeta,
+        deliveryDate.isAcceptableOrUnknown(
+          data['delivery_date']!,
+          _deliveryDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('baby_weight_grams')) {
+      context.handle(
+        _babyWeightGramsMeta,
+        babyWeightGrams.isAcceptableOrUnknown(
+          data['baby_weight_grams']!,
+          _babyWeightGramsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('baby_gender')) {
+      context.handle(
+        _babyGenderMeta,
+        babyGender.isAcceptableOrUnknown(data['baby_gender']!, _babyGenderMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -230,6 +325,26 @@ class $PregnanciesTable extends Pregnancies
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
+      babyName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}baby_name'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}status'],
+      )!,
+      deliveryDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}delivery_date'],
+      ),
+      babyWeightGrams: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}baby_weight_grams'],
+      ),
+      babyGender: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}baby_gender'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
@@ -255,6 +370,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
   final String? doctorName;
   final String? hospitalName;
   final String? notes;
+  final String? babyName;
+  final int status;
+  final int? deliveryDate;
+  final int? babyWeightGrams;
+  final String? babyGender;
   final int createdAt;
   final int updatedAt;
   const Pregnancy({
@@ -265,6 +385,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
     this.doctorName,
     this.hospitalName,
     this.notes,
+    this.babyName,
+    required this.status,
+    this.deliveryDate,
+    this.babyWeightGrams,
+    this.babyGender,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -289,6 +414,19 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
     }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || babyName != null) {
+      map['baby_name'] = Variable<String>(babyName);
+    }
+    map['status'] = Variable<int>(status);
+    if (!nullToAbsent || deliveryDate != null) {
+      map['delivery_date'] = Variable<int>(deliveryDate);
+    }
+    if (!nullToAbsent || babyWeightGrams != null) {
+      map['baby_weight_grams'] = Variable<int>(babyWeightGrams);
+    }
+    if (!nullToAbsent || babyGender != null) {
+      map['baby_gender'] = Variable<String>(babyGender);
     }
     map['created_at'] = Variable<int>(createdAt);
     map['updated_at'] = Variable<int>(updatedAt);
@@ -316,6 +454,19 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
+      babyName: babyName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(babyName),
+      status: Value(status),
+      deliveryDate: deliveryDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deliveryDate),
+      babyWeightGrams: babyWeightGrams == null && nullToAbsent
+          ? const Value.absent()
+          : Value(babyWeightGrams),
+      babyGender: babyGender == null && nullToAbsent
+          ? const Value.absent()
+          : Value(babyGender),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -336,6 +487,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
       doctorName: serializer.fromJson<String?>(json['doctorName']),
       hospitalName: serializer.fromJson<String?>(json['hospitalName']),
       notes: serializer.fromJson<String?>(json['notes']),
+      babyName: serializer.fromJson<String?>(json['babyName']),
+      status: serializer.fromJson<int>(json['status']),
+      deliveryDate: serializer.fromJson<int?>(json['deliveryDate']),
+      babyWeightGrams: serializer.fromJson<int?>(json['babyWeightGrams']),
+      babyGender: serializer.fromJson<String?>(json['babyGender']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
     );
@@ -351,6 +507,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
       'doctorName': serializer.toJson<String?>(doctorName),
       'hospitalName': serializer.toJson<String?>(hospitalName),
       'notes': serializer.toJson<String?>(notes),
+      'babyName': serializer.toJson<String?>(babyName),
+      'status': serializer.toJson<int>(status),
+      'deliveryDate': serializer.toJson<int?>(deliveryDate),
+      'babyWeightGrams': serializer.toJson<int?>(babyWeightGrams),
+      'babyGender': serializer.toJson<String?>(babyGender),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
     };
@@ -364,6 +525,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
     Value<String?> doctorName = const Value.absent(),
     Value<String?> hospitalName = const Value.absent(),
     Value<String?> notes = const Value.absent(),
+    Value<String?> babyName = const Value.absent(),
+    int? status,
+    Value<int?> deliveryDate = const Value.absent(),
+    Value<int?> babyWeightGrams = const Value.absent(),
+    Value<String?> babyGender = const Value.absent(),
     int? createdAt,
     int? updatedAt,
   }) => Pregnancy(
@@ -378,6 +544,13 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
     doctorName: doctorName.present ? doctorName.value : this.doctorName,
     hospitalName: hospitalName.present ? hospitalName.value : this.hospitalName,
     notes: notes.present ? notes.value : this.notes,
+    babyName: babyName.present ? babyName.value : this.babyName,
+    status: status ?? this.status,
+    deliveryDate: deliveryDate.present ? deliveryDate.value : this.deliveryDate,
+    babyWeightGrams: babyWeightGrams.present
+        ? babyWeightGrams.value
+        : this.babyWeightGrams,
+    babyGender: babyGender.present ? babyGender.value : this.babyGender,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -398,6 +571,17 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
           ? data.hospitalName.value
           : this.hospitalName,
       notes: data.notes.present ? data.notes.value : this.notes,
+      babyName: data.babyName.present ? data.babyName.value : this.babyName,
+      status: data.status.present ? data.status.value : this.status,
+      deliveryDate: data.deliveryDate.present
+          ? data.deliveryDate.value
+          : this.deliveryDate,
+      babyWeightGrams: data.babyWeightGrams.present
+          ? data.babyWeightGrams.value
+          : this.babyWeightGrams,
+      babyGender: data.babyGender.present
+          ? data.babyGender.value
+          : this.babyGender,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -413,6 +597,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
           ..write('doctorName: $doctorName, ')
           ..write('hospitalName: $hospitalName, ')
           ..write('notes: $notes, ')
+          ..write('babyName: $babyName, ')
+          ..write('status: $status, ')
+          ..write('deliveryDate: $deliveryDate, ')
+          ..write('babyWeightGrams: $babyWeightGrams, ')
+          ..write('babyGender: $babyGender, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -428,6 +617,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
     doctorName,
     hospitalName,
     notes,
+    babyName,
+    status,
+    deliveryDate,
+    babyWeightGrams,
+    babyGender,
     createdAt,
     updatedAt,
   );
@@ -442,6 +636,11 @@ class Pregnancy extends DataClass implements Insertable<Pregnancy> {
           other.doctorName == this.doctorName &&
           other.hospitalName == this.hospitalName &&
           other.notes == this.notes &&
+          other.babyName == this.babyName &&
+          other.status == this.status &&
+          other.deliveryDate == this.deliveryDate &&
+          other.babyWeightGrams == this.babyWeightGrams &&
+          other.babyGender == this.babyGender &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -454,6 +653,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
   final Value<String?> doctorName;
   final Value<String?> hospitalName;
   final Value<String?> notes;
+  final Value<String?> babyName;
+  final Value<int> status;
+  final Value<int?> deliveryDate;
+  final Value<int?> babyWeightGrams;
+  final Value<String?> babyGender;
   final Value<int> createdAt;
   final Value<int> updatedAt;
   final Value<int> rowid;
@@ -465,6 +669,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
     this.doctorName = const Value.absent(),
     this.hospitalName = const Value.absent(),
     this.notes = const Value.absent(),
+    this.babyName = const Value.absent(),
+    this.status = const Value.absent(),
+    this.deliveryDate = const Value.absent(),
+    this.babyWeightGrams = const Value.absent(),
+    this.babyGender = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -477,6 +686,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
     this.doctorName = const Value.absent(),
     this.hospitalName = const Value.absent(),
     this.notes = const Value.absent(),
+    this.babyName = const Value.absent(),
+    this.status = const Value.absent(),
+    this.deliveryDate = const Value.absent(),
+    this.babyWeightGrams = const Value.absent(),
+    this.babyGender = const Value.absent(),
     required int createdAt,
     required int updatedAt,
     this.rowid = const Value.absent(),
@@ -491,6 +705,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
     Expression<String>? doctorName,
     Expression<String>? hospitalName,
     Expression<String>? notes,
+    Expression<String>? babyName,
+    Expression<int>? status,
+    Expression<int>? deliveryDate,
+    Expression<int>? babyWeightGrams,
+    Expression<String>? babyGender,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
     Expression<int>? rowid,
@@ -504,6 +723,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
       if (doctorName != null) 'doctor_name': doctorName,
       if (hospitalName != null) 'hospital_name': hospitalName,
       if (notes != null) 'notes': notes,
+      if (babyName != null) 'baby_name': babyName,
+      if (status != null) 'status': status,
+      if (deliveryDate != null) 'delivery_date': deliveryDate,
+      if (babyWeightGrams != null) 'baby_weight_grams': babyWeightGrams,
+      if (babyGender != null) 'baby_gender': babyGender,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -518,6 +742,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
     Value<String?>? doctorName,
     Value<String?>? hospitalName,
     Value<String?>? notes,
+    Value<String?>? babyName,
+    Value<int>? status,
+    Value<int?>? deliveryDate,
+    Value<int?>? babyWeightGrams,
+    Value<String?>? babyGender,
     Value<int>? createdAt,
     Value<int>? updatedAt,
     Value<int>? rowid,
@@ -530,6 +759,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
       doctorName: doctorName ?? this.doctorName,
       hospitalName: hospitalName ?? this.hospitalName,
       notes: notes ?? this.notes,
+      babyName: babyName ?? this.babyName,
+      status: status ?? this.status,
+      deliveryDate: deliveryDate ?? this.deliveryDate,
+      babyWeightGrams: babyWeightGrams ?? this.babyWeightGrams,
+      babyGender: babyGender ?? this.babyGender,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -560,6 +794,21 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (babyName.present) {
+      map['baby_name'] = Variable<String>(babyName.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<int>(status.value);
+    }
+    if (deliveryDate.present) {
+      map['delivery_date'] = Variable<int>(deliveryDate.value);
+    }
+    if (babyWeightGrams.present) {
+      map['baby_weight_grams'] = Variable<int>(babyWeightGrams.value);
+    }
+    if (babyGender.present) {
+      map['baby_gender'] = Variable<String>(babyGender.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
     }
@@ -582,6 +831,11 @@ class PregnanciesCompanion extends UpdateCompanion<Pregnancy> {
           ..write('doctorName: $doctorName, ')
           ..write('hospitalName: $hospitalName, ')
           ..write('notes: $notes, ')
+          ..write('babyName: $babyName, ')
+          ..write('status: $status, ')
+          ..write('deliveryDate: $deliveryDate, ')
+          ..write('babyWeightGrams: $babyWeightGrams, ')
+          ..write('babyGender: $babyGender, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -603,6 +857,20 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pregnancyIdMeta = const VerificationMeta(
+    'pregnancyId',
+  );
+  @override
+  late final GeneratedColumn<String> pregnancyId = GeneratedColumn<String>(
+    'pregnancy_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES pregnancies (id)',
+    ),
   );
   static const VerificationMeta _visitDateMeta = const VerificationMeta(
     'visitDate',
@@ -699,6 +967,15 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _moodMeta = const VerificationMeta('mood');
+  @override
+  late final GeneratedColumn<int> mood = GeneratedColumn<int>(
+    'mood',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -724,6 +1001,7 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    pregnancyId,
     visitDate,
     weightKg,
     bloodPressureSystolic,
@@ -733,6 +1011,7 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
     nextAppointmentDate,
     nextAppointmentNotes,
     pregnancyWeekAtVisit,
+    mood,
     createdAt,
     updatedAt,
   ];
@@ -752,6 +1031,17 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('pregnancy_id')) {
+      context.handle(
+        _pregnancyIdMeta,
+        pregnancyId.isAcceptableOrUnknown(
+          data['pregnancy_id']!,
+          _pregnancyIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_pregnancyIdMeta);
     }
     if (data.containsKey('visit_date')) {
       context.handle(
@@ -830,6 +1120,12 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
         ),
       );
     }
+    if (data.containsKey('mood')) {
+      context.handle(
+        _moodMeta,
+        mood.isAcceptableOrUnknown(data['mood']!, _moodMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -858,6 +1154,10 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      pregnancyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregnancy_id'],
       )!,
       visitDate: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -895,6 +1195,10 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
         DriftSqlType.int,
         data['${effectivePrefix}pregnancy_week_at_visit'],
       ),
+      mood: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mood'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
@@ -914,6 +1218,7 @@ class $VisitsTable extends Visits with TableInfo<$VisitsTable, Visit> {
 
 class Visit extends DataClass implements Insertable<Visit> {
   final String id;
+  final String pregnancyId;
   final int visitDate;
   final double? weightKg;
   final int? bloodPressureSystolic;
@@ -923,10 +1228,12 @@ class Visit extends DataClass implements Insertable<Visit> {
   final int? nextAppointmentDate;
   final String? nextAppointmentNotes;
   final int? pregnancyWeekAtVisit;
+  final int? mood;
   final int createdAt;
   final int updatedAt;
   const Visit({
     required this.id,
+    required this.pregnancyId,
     required this.visitDate,
     this.weightKg,
     this.bloodPressureSystolic,
@@ -936,6 +1243,7 @@ class Visit extends DataClass implements Insertable<Visit> {
     this.nextAppointmentDate,
     this.nextAppointmentNotes,
     this.pregnancyWeekAtVisit,
+    this.mood,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -943,6 +1251,7 @@ class Visit extends DataClass implements Insertable<Visit> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['pregnancy_id'] = Variable<String>(pregnancyId);
     map['visit_date'] = Variable<int>(visitDate);
     if (!nullToAbsent || weightKg != null) {
       map['weight_kg'] = Variable<double>(weightKg);
@@ -968,6 +1277,9 @@ class Visit extends DataClass implements Insertable<Visit> {
     if (!nullToAbsent || pregnancyWeekAtVisit != null) {
       map['pregnancy_week_at_visit'] = Variable<int>(pregnancyWeekAtVisit);
     }
+    if (!nullToAbsent || mood != null) {
+      map['mood'] = Variable<int>(mood);
+    }
     map['created_at'] = Variable<int>(createdAt);
     map['updated_at'] = Variable<int>(updatedAt);
     return map;
@@ -976,6 +1288,7 @@ class Visit extends DataClass implements Insertable<Visit> {
   VisitsCompanion toCompanion(bool nullToAbsent) {
     return VisitsCompanion(
       id: Value(id),
+      pregnancyId: Value(pregnancyId),
       visitDate: Value(visitDate),
       weightKg: weightKg == null && nullToAbsent
           ? const Value.absent()
@@ -1001,6 +1314,7 @@ class Visit extends DataClass implements Insertable<Visit> {
       pregnancyWeekAtVisit: pregnancyWeekAtVisit == null && nullToAbsent
           ? const Value.absent()
           : Value(pregnancyWeekAtVisit),
+      mood: mood == null && nullToAbsent ? const Value.absent() : Value(mood),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -1013,6 +1327,7 @@ class Visit extends DataClass implements Insertable<Visit> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Visit(
       id: serializer.fromJson<String>(json['id']),
+      pregnancyId: serializer.fromJson<String>(json['pregnancyId']),
       visitDate: serializer.fromJson<int>(json['visitDate']),
       weightKg: serializer.fromJson<double?>(json['weightKg']),
       bloodPressureSystolic: serializer.fromJson<int?>(
@@ -1032,6 +1347,7 @@ class Visit extends DataClass implements Insertable<Visit> {
       pregnancyWeekAtVisit: serializer.fromJson<int?>(
         json['pregnancyWeekAtVisit'],
       ),
+      mood: serializer.fromJson<int?>(json['mood']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
     );
@@ -1041,6 +1357,7 @@ class Visit extends DataClass implements Insertable<Visit> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'pregnancyId': serializer.toJson<String>(pregnancyId),
       'visitDate': serializer.toJson<int>(visitDate),
       'weightKg': serializer.toJson<double?>(weightKg),
       'bloodPressureSystolic': serializer.toJson<int?>(bloodPressureSystolic),
@@ -1050,6 +1367,7 @@ class Visit extends DataClass implements Insertable<Visit> {
       'nextAppointmentDate': serializer.toJson<int?>(nextAppointmentDate),
       'nextAppointmentNotes': serializer.toJson<String?>(nextAppointmentNotes),
       'pregnancyWeekAtVisit': serializer.toJson<int?>(pregnancyWeekAtVisit),
+      'mood': serializer.toJson<int?>(mood),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
     };
@@ -1057,6 +1375,7 @@ class Visit extends DataClass implements Insertable<Visit> {
 
   Visit copyWith({
     String? id,
+    String? pregnancyId,
     int? visitDate,
     Value<double?> weightKg = const Value.absent(),
     Value<int?> bloodPressureSystolic = const Value.absent(),
@@ -1066,10 +1385,12 @@ class Visit extends DataClass implements Insertable<Visit> {
     Value<int?> nextAppointmentDate = const Value.absent(),
     Value<String?> nextAppointmentNotes = const Value.absent(),
     Value<int?> pregnancyWeekAtVisit = const Value.absent(),
+    Value<int?> mood = const Value.absent(),
     int? createdAt,
     int? updatedAt,
   }) => Visit(
     id: id ?? this.id,
+    pregnancyId: pregnancyId ?? this.pregnancyId,
     visitDate: visitDate ?? this.visitDate,
     weightKg: weightKg.present ? weightKg.value : this.weightKg,
     bloodPressureSystolic: bloodPressureSystolic.present
@@ -1091,12 +1412,16 @@ class Visit extends DataClass implements Insertable<Visit> {
     pregnancyWeekAtVisit: pregnancyWeekAtVisit.present
         ? pregnancyWeekAtVisit.value
         : this.pregnancyWeekAtVisit,
+    mood: mood.present ? mood.value : this.mood,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
   Visit copyWithCompanion(VisitsCompanion data) {
     return Visit(
       id: data.id.present ? data.id.value : this.id,
+      pregnancyId: data.pregnancyId.present
+          ? data.pregnancyId.value
+          : this.pregnancyId,
       visitDate: data.visitDate.present ? data.visitDate.value : this.visitDate,
       weightKg: data.weightKg.present ? data.weightKg.value : this.weightKg,
       bloodPressureSystolic: data.bloodPressureSystolic.present
@@ -1120,6 +1445,7 @@ class Visit extends DataClass implements Insertable<Visit> {
       pregnancyWeekAtVisit: data.pregnancyWeekAtVisit.present
           ? data.pregnancyWeekAtVisit.value
           : this.pregnancyWeekAtVisit,
+      mood: data.mood.present ? data.mood.value : this.mood,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1129,6 +1455,7 @@ class Visit extends DataClass implements Insertable<Visit> {
   String toString() {
     return (StringBuffer('Visit(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('visitDate: $visitDate, ')
           ..write('weightKg: $weightKg, ')
           ..write('bloodPressureSystolic: $bloodPressureSystolic, ')
@@ -1138,6 +1465,7 @@ class Visit extends DataClass implements Insertable<Visit> {
           ..write('nextAppointmentDate: $nextAppointmentDate, ')
           ..write('nextAppointmentNotes: $nextAppointmentNotes, ')
           ..write('pregnancyWeekAtVisit: $pregnancyWeekAtVisit, ')
+          ..write('mood: $mood, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1147,6 +1475,7 @@ class Visit extends DataClass implements Insertable<Visit> {
   @override
   int get hashCode => Object.hash(
     id,
+    pregnancyId,
     visitDate,
     weightKg,
     bloodPressureSystolic,
@@ -1156,6 +1485,7 @@ class Visit extends DataClass implements Insertable<Visit> {
     nextAppointmentDate,
     nextAppointmentNotes,
     pregnancyWeekAtVisit,
+    mood,
     createdAt,
     updatedAt,
   );
@@ -1164,6 +1494,7 @@ class Visit extends DataClass implements Insertable<Visit> {
       identical(this, other) ||
       (other is Visit &&
           other.id == this.id &&
+          other.pregnancyId == this.pregnancyId &&
           other.visitDate == this.visitDate &&
           other.weightKg == this.weightKg &&
           other.bloodPressureSystolic == this.bloodPressureSystolic &&
@@ -1173,12 +1504,14 @@ class Visit extends DataClass implements Insertable<Visit> {
           other.nextAppointmentDate == this.nextAppointmentDate &&
           other.nextAppointmentNotes == this.nextAppointmentNotes &&
           other.pregnancyWeekAtVisit == this.pregnancyWeekAtVisit &&
+          other.mood == this.mood &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
 
 class VisitsCompanion extends UpdateCompanion<Visit> {
   final Value<String> id;
+  final Value<String> pregnancyId;
   final Value<int> visitDate;
   final Value<double?> weightKg;
   final Value<int?> bloodPressureSystolic;
@@ -1188,11 +1521,13 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
   final Value<int?> nextAppointmentDate;
   final Value<String?> nextAppointmentNotes;
   final Value<int?> pregnancyWeekAtVisit;
+  final Value<int?> mood;
   final Value<int> createdAt;
   final Value<int> updatedAt;
   final Value<int> rowid;
   const VisitsCompanion({
     this.id = const Value.absent(),
+    this.pregnancyId = const Value.absent(),
     this.visitDate = const Value.absent(),
     this.weightKg = const Value.absent(),
     this.bloodPressureSystolic = const Value.absent(),
@@ -1202,12 +1537,14 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
     this.nextAppointmentDate = const Value.absent(),
     this.nextAppointmentNotes = const Value.absent(),
     this.pregnancyWeekAtVisit = const Value.absent(),
+    this.mood = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   VisitsCompanion.insert({
     required String id,
+    required String pregnancyId,
     required int visitDate,
     this.weightKg = const Value.absent(),
     this.bloodPressureSystolic = const Value.absent(),
@@ -1217,15 +1554,18 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
     this.nextAppointmentDate = const Value.absent(),
     this.nextAppointmentNotes = const Value.absent(),
     this.pregnancyWeekAtVisit = const Value.absent(),
+    this.mood = const Value.absent(),
     required int createdAt,
     required int updatedAt,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       pregnancyId = Value(pregnancyId),
        visitDate = Value(visitDate),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
   static Insertable<Visit> custom({
     Expression<String>? id,
+    Expression<String>? pregnancyId,
     Expression<int>? visitDate,
     Expression<double>? weightKg,
     Expression<int>? bloodPressureSystolic,
@@ -1235,12 +1575,14 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
     Expression<int>? nextAppointmentDate,
     Expression<String>? nextAppointmentNotes,
     Expression<int>? pregnancyWeekAtVisit,
+    Expression<int>? mood,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (pregnancyId != null) 'pregnancy_id': pregnancyId,
       if (visitDate != null) 'visit_date': visitDate,
       if (weightKg != null) 'weight_kg': weightKg,
       if (bloodPressureSystolic != null)
@@ -1255,6 +1597,7 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
         'next_appointment_notes': nextAppointmentNotes,
       if (pregnancyWeekAtVisit != null)
         'pregnancy_week_at_visit': pregnancyWeekAtVisit,
+      if (mood != null) 'mood': mood,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1263,6 +1606,7 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
 
   VisitsCompanion copyWith({
     Value<String>? id,
+    Value<String>? pregnancyId,
     Value<int>? visitDate,
     Value<double?>? weightKg,
     Value<int?>? bloodPressureSystolic,
@@ -1272,12 +1616,14 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
     Value<int?>? nextAppointmentDate,
     Value<String?>? nextAppointmentNotes,
     Value<int?>? pregnancyWeekAtVisit,
+    Value<int?>? mood,
     Value<int>? createdAt,
     Value<int>? updatedAt,
     Value<int>? rowid,
   }) {
     return VisitsCompanion(
       id: id ?? this.id,
+      pregnancyId: pregnancyId ?? this.pregnancyId,
       visitDate: visitDate ?? this.visitDate,
       weightKg: weightKg ?? this.weightKg,
       bloodPressureSystolic:
@@ -1289,6 +1635,7 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
       nextAppointmentDate: nextAppointmentDate ?? this.nextAppointmentDate,
       nextAppointmentNotes: nextAppointmentNotes ?? this.nextAppointmentNotes,
       pregnancyWeekAtVisit: pregnancyWeekAtVisit ?? this.pregnancyWeekAtVisit,
+      mood: mood ?? this.mood,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1300,6 +1647,9 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (pregnancyId.present) {
+      map['pregnancy_id'] = Variable<String>(pregnancyId.value);
     }
     if (visitDate.present) {
       map['visit_date'] = Variable<int>(visitDate.value);
@@ -1336,6 +1686,9 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
         pregnancyWeekAtVisit.value,
       );
     }
+    if (mood.present) {
+      map['mood'] = Variable<int>(mood.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
     }
@@ -1352,6 +1705,7 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
   String toString() {
     return (StringBuffer('VisitsCompanion(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('visitDate: $visitDate, ')
           ..write('weightKg: $weightKg, ')
           ..write('bloodPressureSystolic: $bloodPressureSystolic, ')
@@ -1361,6 +1715,7 @@ class VisitsCompanion extends UpdateCompanion<Visit> {
           ..write('nextAppointmentDate: $nextAppointmentDate, ')
           ..write('nextAppointmentNotes: $nextAppointmentNotes, ')
           ..write('pregnancyWeekAtVisit: $pregnancyWeekAtVisit, ')
+          ..write('mood: $mood, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -1383,6 +1738,20 @@ class $MedicationsTable extends Medications
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pregnancyIdMeta = const VerificationMeta(
+    'pregnancyId',
+  );
+  @override
+  late final GeneratedColumn<String> pregnancyId = GeneratedColumn<String>(
+    'pregnancy_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES pregnancies (id)',
+    ),
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -1520,6 +1889,7 @@ class $MedicationsTable extends Medications
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    pregnancyId,
     name,
     dosage,
     frequency,
@@ -1549,6 +1919,17 @@ class $MedicationsTable extends Medications
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('pregnancy_id')) {
+      context.handle(
+        _pregnancyIdMeta,
+        pregnancyId.isAcceptableOrUnknown(
+          data['pregnancy_id']!,
+          _pregnancyIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_pregnancyIdMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -1649,6 +2030,10 @@ class $MedicationsTable extends Medications
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      pregnancyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregnancy_id'],
+      )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -1708,6 +2093,7 @@ class $MedicationsTable extends Medications
 
 class Medication extends DataClass implements Insertable<Medication> {
   final String id;
+  final String pregnancyId;
   final String name;
   final String? dosage;
   final int frequency;
@@ -1722,6 +2108,7 @@ class Medication extends DataClass implements Insertable<Medication> {
   final int updatedAt;
   const Medication({
     required this.id,
+    required this.pregnancyId,
     required this.name,
     this.dosage,
     required this.frequency,
@@ -1739,6 +2126,7 @@ class Medication extends DataClass implements Insertable<Medication> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['pregnancy_id'] = Variable<String>(pregnancyId);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || dosage != null) {
       map['dosage'] = Variable<String>(dosage);
@@ -1771,6 +2159,7 @@ class Medication extends DataClass implements Insertable<Medication> {
   MedicationsCompanion toCompanion(bool nullToAbsent) {
     return MedicationsCompanion(
       id: Value(id),
+      pregnancyId: Value(pregnancyId),
       name: Value(name),
       dosage: dosage == null && nullToAbsent
           ? const Value.absent()
@@ -1807,6 +2196,7 @@ class Medication extends DataClass implements Insertable<Medication> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Medication(
       id: serializer.fromJson<String>(json['id']),
+      pregnancyId: serializer.fromJson<String>(json['pregnancyId']),
       name: serializer.fromJson<String>(json['name']),
       dosage: serializer.fromJson<String?>(json['dosage']),
       frequency: serializer.fromJson<int>(json['frequency']),
@@ -1826,6 +2216,7 @@ class Medication extends DataClass implements Insertable<Medication> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'pregnancyId': serializer.toJson<String>(pregnancyId),
       'name': serializer.toJson<String>(name),
       'dosage': serializer.toJson<String?>(dosage),
       'frequency': serializer.toJson<int>(frequency),
@@ -1843,6 +2234,7 @@ class Medication extends DataClass implements Insertable<Medication> {
 
   Medication copyWith({
     String? id,
+    String? pregnancyId,
     String? name,
     Value<String?> dosage = const Value.absent(),
     int? frequency,
@@ -1857,6 +2249,7 @@ class Medication extends DataClass implements Insertable<Medication> {
     int? updatedAt,
   }) => Medication(
     id: id ?? this.id,
+    pregnancyId: pregnancyId ?? this.pregnancyId,
     name: name ?? this.name,
     dosage: dosage.present ? dosage.value : this.dosage,
     frequency: frequency ?? this.frequency,
@@ -1875,6 +2268,9 @@ class Medication extends DataClass implements Insertable<Medication> {
   Medication copyWithCompanion(MedicationsCompanion data) {
     return Medication(
       id: data.id.present ? data.id.value : this.id,
+      pregnancyId: data.pregnancyId.present
+          ? data.pregnancyId.value
+          : this.pregnancyId,
       name: data.name.present ? data.name.value : this.name,
       dosage: data.dosage.present ? data.dosage.value : this.dosage,
       frequency: data.frequency.present ? data.frequency.value : this.frequency,
@@ -1898,6 +2294,7 @@ class Medication extends DataClass implements Insertable<Medication> {
   String toString() {
     return (StringBuffer('Medication(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('name: $name, ')
           ..write('dosage: $dosage, ')
           ..write('frequency: $frequency, ')
@@ -1917,6 +2314,7 @@ class Medication extends DataClass implements Insertable<Medication> {
   @override
   int get hashCode => Object.hash(
     id,
+    pregnancyId,
     name,
     dosage,
     frequency,
@@ -1935,6 +2333,7 @@ class Medication extends DataClass implements Insertable<Medication> {
       identical(this, other) ||
       (other is Medication &&
           other.id == this.id &&
+          other.pregnancyId == this.pregnancyId &&
           other.name == this.name &&
           other.dosage == this.dosage &&
           other.frequency == this.frequency &&
@@ -1951,6 +2350,7 @@ class Medication extends DataClass implements Insertable<Medication> {
 
 class MedicationsCompanion extends UpdateCompanion<Medication> {
   final Value<String> id;
+  final Value<String> pregnancyId;
   final Value<String> name;
   final Value<String?> dosage;
   final Value<int> frequency;
@@ -1966,6 +2366,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
   final Value<int> rowid;
   const MedicationsCompanion({
     this.id = const Value.absent(),
+    this.pregnancyId = const Value.absent(),
     this.name = const Value.absent(),
     this.dosage = const Value.absent(),
     this.frequency = const Value.absent(),
@@ -1982,6 +2383,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
   });
   MedicationsCompanion.insert({
     required String id,
+    required String pregnancyId,
     required String name,
     this.dosage = const Value.absent(),
     required int frequency,
@@ -1996,12 +2398,14 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
     required int updatedAt,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       pregnancyId = Value(pregnancyId),
        name = Value(name),
        frequency = Value(frequency),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
   static Insertable<Medication> custom({
     Expression<String>? id,
+    Expression<String>? pregnancyId,
     Expression<String>? name,
     Expression<String>? dosage,
     Expression<int>? frequency,
@@ -2018,6 +2422,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (pregnancyId != null) 'pregnancy_id': pregnancyId,
       if (name != null) 'name': name,
       if (dosage != null) 'dosage': dosage,
       if (frequency != null) 'frequency': frequency,
@@ -2036,6 +2441,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
 
   MedicationsCompanion copyWith({
     Value<String>? id,
+    Value<String>? pregnancyId,
     Value<String>? name,
     Value<String?>? dosage,
     Value<int>? frequency,
@@ -2052,6 +2458,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
   }) {
     return MedicationsCompanion(
       id: id ?? this.id,
+      pregnancyId: pregnancyId ?? this.pregnancyId,
       name: name ?? this.name,
       dosage: dosage ?? this.dosage,
       frequency: frequency ?? this.frequency,
@@ -2073,6 +2480,9 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (pregnancyId.present) {
+      map['pregnancy_id'] = Variable<String>(pregnancyId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -2120,6 +2530,7 @@ class MedicationsCompanion extends UpdateCompanion<Medication> {
   String toString() {
     return (StringBuffer('MedicationsCompanion(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('name: $name, ')
           ..write('dosage: $dosage, ')
           ..write('frequency: $frequency, ')
@@ -2152,6 +2563,20 @@ class $LabResultsTable extends LabResults
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pregnancyIdMeta = const VerificationMeta(
+    'pregnancyId',
+  );
+  @override
+  late final GeneratedColumn<String> pregnancyId = GeneratedColumn<String>(
+    'pregnancy_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES pregnancies (id)',
+    ),
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -2252,6 +2677,7 @@ class $LabResultsTable extends LabResults
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    pregnancyId,
     title,
     type,
     testDate,
@@ -2278,6 +2704,17 @@ class $LabResultsTable extends LabResults
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('pregnancy_id')) {
+      context.handle(
+        _pregnancyIdMeta,
+        pregnancyId.isAcceptableOrUnknown(
+          data['pregnancy_id']!,
+          _pregnancyIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_pregnancyIdMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -2359,6 +2796,10 @@ class $LabResultsTable extends LabResults
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      pregnancyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregnancy_id'],
+      )!,
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -2406,6 +2847,7 @@ class $LabResultsTable extends LabResults
 
 class LabResult extends DataClass implements Insertable<LabResult> {
   final String id;
+  final String pregnancyId;
   final String title;
   final int type;
   final int testDate;
@@ -2417,6 +2859,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
   final int updatedAt;
   const LabResult({
     required this.id,
+    required this.pregnancyId,
     required this.title,
     required this.type,
     required this.testDate,
@@ -2431,6 +2874,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['pregnancy_id'] = Variable<String>(pregnancyId);
     map['title'] = Variable<String>(title);
     map['type'] = Variable<int>(type);
     map['test_date'] = Variable<int>(testDate);
@@ -2454,6 +2898,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
   LabResultsCompanion toCompanion(bool nullToAbsent) {
     return LabResultsCompanion(
       id: Value(id),
+      pregnancyId: Value(pregnancyId),
       title: Value(title),
       type: Value(type),
       testDate: Value(testDate),
@@ -2481,6 +2926,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LabResult(
       id: serializer.fromJson<String>(json['id']),
+      pregnancyId: serializer.fromJson<String>(json['pregnancyId']),
       title: serializer.fromJson<String>(json['title']),
       type: serializer.fromJson<int>(json['type']),
       testDate: serializer.fromJson<int>(json['testDate']),
@@ -2497,6 +2943,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'pregnancyId': serializer.toJson<String>(pregnancyId),
       'title': serializer.toJson<String>(title),
       'type': serializer.toJson<int>(type),
       'testDate': serializer.toJson<int>(testDate),
@@ -2511,6 +2958,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
 
   LabResult copyWith({
     String? id,
+    String? pregnancyId,
     String? title,
     int? type,
     int? testDate,
@@ -2522,6 +2970,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
     int? updatedAt,
   }) => LabResult(
     id: id ?? this.id,
+    pregnancyId: pregnancyId ?? this.pregnancyId,
     title: title ?? this.title,
     type: type ?? this.type,
     testDate: testDate ?? this.testDate,
@@ -2535,6 +2984,9 @@ class LabResult extends DataClass implements Insertable<LabResult> {
   LabResult copyWithCompanion(LabResultsCompanion data) {
     return LabResult(
       id: data.id.present ? data.id.value : this.id,
+      pregnancyId: data.pregnancyId.present
+          ? data.pregnancyId.value
+          : this.pregnancyId,
       title: data.title.present ? data.title.value : this.title,
       type: data.type.present ? data.type.value : this.type,
       testDate: data.testDate.present ? data.testDate.value : this.testDate,
@@ -2555,6 +3007,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
   String toString() {
     return (StringBuffer('LabResult(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('title: $title, ')
           ..write('type: $type, ')
           ..write('testDate: $testDate, ')
@@ -2571,6 +3024,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
   @override
   int get hashCode => Object.hash(
     id,
+    pregnancyId,
     title,
     type,
     testDate,
@@ -2586,6 +3040,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
       identical(this, other) ||
       (other is LabResult &&
           other.id == this.id &&
+          other.pregnancyId == this.pregnancyId &&
           other.title == this.title &&
           other.type == this.type &&
           other.testDate == this.testDate &&
@@ -2599,6 +3054,7 @@ class LabResult extends DataClass implements Insertable<LabResult> {
 
 class LabResultsCompanion extends UpdateCompanion<LabResult> {
   final Value<String> id;
+  final Value<String> pregnancyId;
   final Value<String> title;
   final Value<int> type;
   final Value<int> testDate;
@@ -2611,6 +3067,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
   final Value<int> rowid;
   const LabResultsCompanion({
     this.id = const Value.absent(),
+    this.pregnancyId = const Value.absent(),
     this.title = const Value.absent(),
     this.type = const Value.absent(),
     this.testDate = const Value.absent(),
@@ -2624,6 +3081,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
   });
   LabResultsCompanion.insert({
     required String id,
+    required String pregnancyId,
     required String title,
     required int type,
     required int testDate,
@@ -2635,6 +3093,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
     required int updatedAt,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       pregnancyId = Value(pregnancyId),
        title = Value(title),
        type = Value(type),
        testDate = Value(testDate),
@@ -2642,6 +3101,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
        updatedAt = Value(updatedAt);
   static Insertable<LabResult> custom({
     Expression<String>? id,
+    Expression<String>? pregnancyId,
     Expression<String>? title,
     Expression<int>? type,
     Expression<int>? testDate,
@@ -2655,6 +3115,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (pregnancyId != null) 'pregnancy_id': pregnancyId,
       if (title != null) 'title': title,
       if (type != null) 'type': type,
       if (testDate != null) 'test_date': testDate,
@@ -2670,6 +3131,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
 
   LabResultsCompanion copyWith({
     Value<String>? id,
+    Value<String>? pregnancyId,
     Value<String>? title,
     Value<int>? type,
     Value<int>? testDate,
@@ -2683,6 +3145,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
   }) {
     return LabResultsCompanion(
       id: id ?? this.id,
+      pregnancyId: pregnancyId ?? this.pregnancyId,
       title: title ?? this.title,
       type: type ?? this.type,
       testDate: testDate ?? this.testDate,
@@ -2701,6 +3164,9 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (pregnancyId.present) {
+      map['pregnancy_id'] = Variable<String>(pregnancyId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -2739,6 +3205,7 @@ class LabResultsCompanion extends UpdateCompanion<LabResult> {
   String toString() {
     return (StringBuffer('LabResultsCompanion(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('title: $title, ')
           ..write('type: $type, ')
           ..write('testDate: $testDate, ')
@@ -2768,6 +3235,20 @@ class $UltrasoundImagesTable extends UltrasoundImages
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pregnancyIdMeta = const VerificationMeta(
+    'pregnancyId',
+  );
+  @override
+  late final GeneratedColumn<String> pregnancyId = GeneratedColumn<String>(
+    'pregnancy_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES pregnancies (id)',
+    ),
   );
   static const VerificationMeta _imagePathMeta = const VerificationMeta(
     'imagePath',
@@ -2861,6 +3342,7 @@ class $UltrasoundImagesTable extends UltrasoundImages
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    pregnancyId,
     imagePath,
     imageDate,
     pregnancyWeek,
@@ -2886,6 +3368,17 @@ class $UltrasoundImagesTable extends UltrasoundImages
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('pregnancy_id')) {
+      context.handle(
+        _pregnancyIdMeta,
+        pregnancyId.isAcceptableOrUnknown(
+          data['pregnancy_id']!,
+          _pregnancyIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_pregnancyIdMeta);
     }
     if (data.containsKey('image_path')) {
       context.handle(
@@ -2962,6 +3455,10 @@ class $UltrasoundImagesTable extends UltrasoundImages
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      pregnancyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregnancy_id'],
+      )!,
       imagePath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}image_path'],
@@ -3005,6 +3502,7 @@ class $UltrasoundImagesTable extends UltrasoundImages
 
 class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
   final String id;
+  final String pregnancyId;
   final String imagePath;
   final int imageDate;
   final int? pregnancyWeek;
@@ -3015,6 +3513,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
   final int updatedAt;
   const UltrasoundImage({
     required this.id,
+    required this.pregnancyId,
     required this.imagePath,
     required this.imageDate,
     this.pregnancyWeek,
@@ -3028,6 +3527,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['pregnancy_id'] = Variable<String>(pregnancyId);
     map['image_path'] = Variable<String>(imagePath);
     map['image_date'] = Variable<int>(imageDate);
     if (!nullToAbsent || pregnancyWeek != null) {
@@ -3050,6 +3550,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
   UltrasoundImagesCompanion toCompanion(bool nullToAbsent) {
     return UltrasoundImagesCompanion(
       id: Value(id),
+      pregnancyId: Value(pregnancyId),
       imagePath: Value(imagePath),
       imageDate: Value(imageDate),
       pregnancyWeek: pregnancyWeek == null && nullToAbsent
@@ -3076,6 +3577,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UltrasoundImage(
       id: serializer.fromJson<String>(json['id']),
+      pregnancyId: serializer.fromJson<String>(json['pregnancyId']),
       imagePath: serializer.fromJson<String>(json['imagePath']),
       imageDate: serializer.fromJson<int>(json['imageDate']),
       pregnancyWeek: serializer.fromJson<int?>(json['pregnancyWeek']),
@@ -3091,6 +3593,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'pregnancyId': serializer.toJson<String>(pregnancyId),
       'imagePath': serializer.toJson<String>(imagePath),
       'imageDate': serializer.toJson<int>(imageDate),
       'pregnancyWeek': serializer.toJson<int?>(pregnancyWeek),
@@ -3104,6 +3607,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
 
   UltrasoundImage copyWith({
     String? id,
+    String? pregnancyId,
     String? imagePath,
     int? imageDate,
     Value<int?> pregnancyWeek = const Value.absent(),
@@ -3114,6 +3618,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
     int? updatedAt,
   }) => UltrasoundImage(
     id: id ?? this.id,
+    pregnancyId: pregnancyId ?? this.pregnancyId,
     imagePath: imagePath ?? this.imagePath,
     imageDate: imageDate ?? this.imageDate,
     pregnancyWeek: pregnancyWeek.present
@@ -3130,6 +3635,9 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
   UltrasoundImage copyWithCompanion(UltrasoundImagesCompanion data) {
     return UltrasoundImage(
       id: data.id.present ? data.id.value : this.id,
+      pregnancyId: data.pregnancyId.present
+          ? data.pregnancyId.value
+          : this.pregnancyId,
       imagePath: data.imagePath.present ? data.imagePath.value : this.imagePath,
       imageDate: data.imageDate.present ? data.imageDate.value : this.imageDate,
       pregnancyWeek: data.pregnancyWeek.present
@@ -3149,6 +3657,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
   String toString() {
     return (StringBuffer('UltrasoundImage(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('imagePath: $imagePath, ')
           ..write('imageDate: $imageDate, ')
           ..write('pregnancyWeek: $pregnancyWeek, ')
@@ -3164,6 +3673,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
   @override
   int get hashCode => Object.hash(
     id,
+    pregnancyId,
     imagePath,
     imageDate,
     pregnancyWeek,
@@ -3178,6 +3688,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
       identical(this, other) ||
       (other is UltrasoundImage &&
           other.id == this.id &&
+          other.pregnancyId == this.pregnancyId &&
           other.imagePath == this.imagePath &&
           other.imageDate == this.imageDate &&
           other.pregnancyWeek == this.pregnancyWeek &&
@@ -3190,6 +3701,7 @@ class UltrasoundImage extends DataClass implements Insertable<UltrasoundImage> {
 
 class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
   final Value<String> id;
+  final Value<String> pregnancyId;
   final Value<String> imagePath;
   final Value<int> imageDate;
   final Value<int?> pregnancyWeek;
@@ -3201,6 +3713,7 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
   final Value<int> rowid;
   const UltrasoundImagesCompanion({
     this.id = const Value.absent(),
+    this.pregnancyId = const Value.absent(),
     this.imagePath = const Value.absent(),
     this.imageDate = const Value.absent(),
     this.pregnancyWeek = const Value.absent(),
@@ -3213,6 +3726,7 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
   });
   UltrasoundImagesCompanion.insert({
     required String id,
+    required String pregnancyId,
     required String imagePath,
     required int imageDate,
     this.pregnancyWeek = const Value.absent(),
@@ -3223,12 +3737,14 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
     required int updatedAt,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       pregnancyId = Value(pregnancyId),
        imagePath = Value(imagePath),
        imageDate = Value(imageDate),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
   static Insertable<UltrasoundImage> custom({
     Expression<String>? id,
+    Expression<String>? pregnancyId,
     Expression<String>? imagePath,
     Expression<int>? imageDate,
     Expression<int>? pregnancyWeek,
@@ -3241,6 +3757,7 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (pregnancyId != null) 'pregnancy_id': pregnancyId,
       if (imagePath != null) 'image_path': imagePath,
       if (imageDate != null) 'image_date': imageDate,
       if (pregnancyWeek != null) 'pregnancy_week': pregnancyWeek,
@@ -3255,6 +3772,7 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
 
   UltrasoundImagesCompanion copyWith({
     Value<String>? id,
+    Value<String>? pregnancyId,
     Value<String>? imagePath,
     Value<int>? imageDate,
     Value<int?>? pregnancyWeek,
@@ -3267,6 +3785,7 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
   }) {
     return UltrasoundImagesCompanion(
       id: id ?? this.id,
+      pregnancyId: pregnancyId ?? this.pregnancyId,
       imagePath: imagePath ?? this.imagePath,
       imageDate: imageDate ?? this.imageDate,
       pregnancyWeek: pregnancyWeek ?? this.pregnancyWeek,
@@ -3284,6 +3803,9 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (pregnancyId.present) {
+      map['pregnancy_id'] = Variable<String>(pregnancyId.value);
     }
     if (imagePath.present) {
       map['image_path'] = Variable<String>(imagePath.value);
@@ -3319,6 +3841,7 @@ class UltrasoundImagesCompanion extends UpdateCompanion<UltrasoundImage> {
   String toString() {
     return (StringBuffer('UltrasoundImagesCompanion(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('imagePath: $imagePath, ')
           ..write('imageDate: $imageDate, ')
           ..write('pregnancyWeek: $pregnancyWeek, ')
@@ -3347,6 +3870,20 @@ class $AppointmentsTable extends Appointments
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pregnancyIdMeta = const VerificationMeta(
+    'pregnancyId',
+  );
+  @override
+  late final GeneratedColumn<String> pregnancyId = GeneratedColumn<String>(
+    'pregnancy_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES pregnancies (id)',
+    ),
   );
   static const VerificationMeta _appointmentDateMeta = const VerificationMeta(
     'appointmentDate',
@@ -3451,6 +3988,7 @@ class $AppointmentsTable extends Appointments
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    pregnancyId,
     appointmentDate,
     purpose,
     location,
@@ -3477,6 +4015,17 @@ class $AppointmentsTable extends Appointments
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('pregnancy_id')) {
+      context.handle(
+        _pregnancyIdMeta,
+        pregnancyId.isAcceptableOrUnknown(
+          data['pregnancy_id']!,
+          _pregnancyIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_pregnancyIdMeta);
     }
     if (data.containsKey('appointment_date')) {
       context.handle(
@@ -3560,6 +4109,10 @@ class $AppointmentsTable extends Appointments
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      pregnancyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregnancy_id'],
+      )!,
       appointmentDate: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}appointment_date'],
@@ -3607,6 +4160,7 @@ class $AppointmentsTable extends Appointments
 
 class Appointment extends DataClass implements Insertable<Appointment> {
   final String id;
+  final String pregnancyId;
   final int appointmentDate;
   final String? purpose;
   final String? location;
@@ -3618,6 +4172,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
   final int updatedAt;
   const Appointment({
     required this.id,
+    required this.pregnancyId,
     required this.appointmentDate,
     this.purpose,
     this.location,
@@ -3632,6 +4187,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['pregnancy_id'] = Variable<String>(pregnancyId);
     map['appointment_date'] = Variable<int>(appointmentDate);
     if (!nullToAbsent || purpose != null) {
       map['purpose'] = Variable<String>(purpose);
@@ -3657,6 +4213,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
   AppointmentsCompanion toCompanion(bool nullToAbsent) {
     return AppointmentsCompanion(
       id: Value(id),
+      pregnancyId: Value(pregnancyId),
       appointmentDate: Value(appointmentDate),
       purpose: purpose == null && nullToAbsent
           ? const Value.absent()
@@ -3686,6 +4243,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Appointment(
       id: serializer.fromJson<String>(json['id']),
+      pregnancyId: serializer.fromJson<String>(json['pregnancyId']),
       appointmentDate: serializer.fromJson<int>(json['appointmentDate']),
       purpose: serializer.fromJson<String?>(json['purpose']),
       location: serializer.fromJson<String?>(json['location']),
@@ -3704,6 +4262,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'pregnancyId': serializer.toJson<String>(pregnancyId),
       'appointmentDate': serializer.toJson<int>(appointmentDate),
       'purpose': serializer.toJson<String?>(purpose),
       'location': serializer.toJson<String?>(location),
@@ -3718,6 +4277,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
 
   Appointment copyWith({
     String? id,
+    String? pregnancyId,
     int? appointmentDate,
     Value<String?> purpose = const Value.absent(),
     Value<String?> location = const Value.absent(),
@@ -3729,6 +4289,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
     int? updatedAt,
   }) => Appointment(
     id: id ?? this.id,
+    pregnancyId: pregnancyId ?? this.pregnancyId,
     appointmentDate: appointmentDate ?? this.appointmentDate,
     purpose: purpose.present ? purpose.value : this.purpose,
     location: location.present ? location.value : this.location,
@@ -3744,6 +4305,9 @@ class Appointment extends DataClass implements Insertable<Appointment> {
   Appointment copyWithCompanion(AppointmentsCompanion data) {
     return Appointment(
       id: data.id.present ? data.id.value : this.id,
+      pregnancyId: data.pregnancyId.present
+          ? data.pregnancyId.value
+          : this.pregnancyId,
       appointmentDate: data.appointmentDate.present
           ? data.appointmentDate.value
           : this.appointmentDate,
@@ -3768,6 +4332,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
   String toString() {
     return (StringBuffer('Appointment(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('appointmentDate: $appointmentDate, ')
           ..write('purpose: $purpose, ')
           ..write('location: $location, ')
@@ -3784,6 +4349,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
   @override
   int get hashCode => Object.hash(
     id,
+    pregnancyId,
     appointmentDate,
     purpose,
     location,
@@ -3799,6 +4365,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
       identical(this, other) ||
       (other is Appointment &&
           other.id == this.id &&
+          other.pregnancyId == this.pregnancyId &&
           other.appointmentDate == this.appointmentDate &&
           other.purpose == this.purpose &&
           other.location == this.location &&
@@ -3812,6 +4379,7 @@ class Appointment extends DataClass implements Insertable<Appointment> {
 
 class AppointmentsCompanion extends UpdateCompanion<Appointment> {
   final Value<String> id;
+  final Value<String> pregnancyId;
   final Value<int> appointmentDate;
   final Value<String?> purpose;
   final Value<String?> location;
@@ -3824,6 +4392,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
   final Value<int> rowid;
   const AppointmentsCompanion({
     this.id = const Value.absent(),
+    this.pregnancyId = const Value.absent(),
     this.appointmentDate = const Value.absent(),
     this.purpose = const Value.absent(),
     this.location = const Value.absent(),
@@ -3837,6 +4406,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
   });
   AppointmentsCompanion.insert({
     required String id,
+    required String pregnancyId,
     required int appointmentDate,
     this.purpose = const Value.absent(),
     this.location = const Value.absent(),
@@ -3848,11 +4418,13 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
     required int updatedAt,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       pregnancyId = Value(pregnancyId),
        appointmentDate = Value(appointmentDate),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
   static Insertable<Appointment> custom({
     Expression<String>? id,
+    Expression<String>? pregnancyId,
     Expression<int>? appointmentDate,
     Expression<String>? purpose,
     Expression<String>? location,
@@ -3866,6 +4438,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (pregnancyId != null) 'pregnancy_id': pregnancyId,
       if (appointmentDate != null) 'appointment_date': appointmentDate,
       if (purpose != null) 'purpose': purpose,
       if (location != null) 'location': location,
@@ -3882,6 +4455,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
 
   AppointmentsCompanion copyWith({
     Value<String>? id,
+    Value<String>? pregnancyId,
     Value<int>? appointmentDate,
     Value<String?>? purpose,
     Value<String?>? location,
@@ -3895,6 +4469,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
   }) {
     return AppointmentsCompanion(
       id: id ?? this.id,
+      pregnancyId: pregnancyId ?? this.pregnancyId,
       appointmentDate: appointmentDate ?? this.appointmentDate,
       purpose: purpose ?? this.purpose,
       location: location ?? this.location,
@@ -3914,6 +4489,9 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (pregnancyId.present) {
+      map['pregnancy_id'] = Variable<String>(pregnancyId.value);
     }
     if (appointmentDate.present) {
       map['appointment_date'] = Variable<int>(appointmentDate.value);
@@ -3954,6 +4532,7 @@ class AppointmentsCompanion extends UpdateCompanion<Appointment> {
   String toString() {
     return (StringBuffer('AppointmentsCompanion(')
           ..write('id: $id, ')
+          ..write('pregnancyId: $pregnancyId, ')
           ..write('appointmentDate: $appointmentDate, ')
           ..write('purpose: $purpose, ')
           ..write('location: $location, ')
@@ -4003,6 +4582,11 @@ typedef $$PregnanciesTableCreateCompanionBuilder =
       Value<String?> doctorName,
       Value<String?> hospitalName,
       Value<String?> notes,
+      Value<String?> babyName,
+      Value<int> status,
+      Value<int?> deliveryDate,
+      Value<int?> babyWeightGrams,
+      Value<String?> babyGender,
       required int createdAt,
       required int updatedAt,
       Value<int> rowid,
@@ -4016,10 +4600,125 @@ typedef $$PregnanciesTableUpdateCompanionBuilder =
       Value<String?> doctorName,
       Value<String?> hospitalName,
       Value<String?> notes,
+      Value<String?> babyName,
+      Value<int> status,
+      Value<int?> deliveryDate,
+      Value<int?> babyWeightGrams,
+      Value<String?> babyGender,
       Value<int> createdAt,
       Value<int> updatedAt,
       Value<int> rowid,
     });
+
+final class $$PregnanciesTableReferences
+    extends BaseReferences<_$AppDatabase, $PregnanciesTable, Pregnancy> {
+  $$PregnanciesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$VisitsTable, List<Visit>> _visitsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.visits,
+    aliasName: $_aliasNameGenerator(db.pregnancies.id, db.visits.pregnancyId),
+  );
+
+  $$VisitsTableProcessedTableManager get visitsRefs {
+    final manager = $$VisitsTableTableManager(
+      $_db,
+      $_db.visits,
+    ).filter((f) => f.pregnancyId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_visitsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$MedicationsTable, List<Medication>>
+  _medicationsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.medications,
+    aliasName: $_aliasNameGenerator(
+      db.pregnancies.id,
+      db.medications.pregnancyId,
+    ),
+  );
+
+  $$MedicationsTableProcessedTableManager get medicationsRefs {
+    final manager = $$MedicationsTableTableManager(
+      $_db,
+      $_db.medications,
+    ).filter((f) => f.pregnancyId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_medicationsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$LabResultsTable, List<LabResult>>
+  _labResultsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.labResults,
+    aliasName: $_aliasNameGenerator(
+      db.pregnancies.id,
+      db.labResults.pregnancyId,
+    ),
+  );
+
+  $$LabResultsTableProcessedTableManager get labResultsRefs {
+    final manager = $$LabResultsTableTableManager(
+      $_db,
+      $_db.labResults,
+    ).filter((f) => f.pregnancyId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_labResultsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$UltrasoundImagesTable, List<UltrasoundImage>>
+  _ultrasoundImagesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.ultrasoundImages,
+    aliasName: $_aliasNameGenerator(
+      db.pregnancies.id,
+      db.ultrasoundImages.pregnancyId,
+    ),
+  );
+
+  $$UltrasoundImagesTableProcessedTableManager get ultrasoundImagesRefs {
+    final manager = $$UltrasoundImagesTableTableManager(
+      $_db,
+      $_db.ultrasoundImages,
+    ).filter((f) => f.pregnancyId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _ultrasoundImagesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$AppointmentsTable, List<Appointment>>
+  _appointmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.appointments,
+    aliasName: $_aliasNameGenerator(
+      db.pregnancies.id,
+      db.appointments.pregnancyId,
+    ),
+  );
+
+  $$AppointmentsTableProcessedTableManager get appointmentsRefs {
+    final manager = $$AppointmentsTableTableManager(
+      $_db,
+      $_db.appointments,
+    ).filter((f) => f.pregnancyId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_appointmentsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$PregnanciesTableFilterComposer
     extends Composer<_$AppDatabase, $PregnanciesTable> {
@@ -4065,6 +4764,31 @@ class $$PregnanciesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get babyName => $composableBuilder(
+    column: $table.babyName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deliveryDate => $composableBuilder(
+    column: $table.deliveryDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get babyWeightGrams => $composableBuilder(
+    column: $table.babyWeightGrams,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get babyGender => $composableBuilder(
+    column: $table.babyGender,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -4074,6 +4798,131 @@ class $$PregnanciesTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> visitsRefs(
+    Expression<bool> Function($$VisitsTableFilterComposer f) f,
+  ) {
+    final $$VisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> medicationsRefs(
+    Expression<bool> Function($$MedicationsTableFilterComposer f) f,
+  ) {
+    final $$MedicationsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.medications,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MedicationsTableFilterComposer(
+            $db: $db,
+            $table: $db.medications,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> labResultsRefs(
+    Expression<bool> Function($$LabResultsTableFilterComposer f) f,
+  ) {
+    final $$LabResultsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.labResults,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LabResultsTableFilterComposer(
+            $db: $db,
+            $table: $db.labResults,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> ultrasoundImagesRefs(
+    Expression<bool> Function($$UltrasoundImagesTableFilterComposer f) f,
+  ) {
+    final $$UltrasoundImagesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ultrasoundImages,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UltrasoundImagesTableFilterComposer(
+            $db: $db,
+            $table: $db.ultrasoundImages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> appointmentsRefs(
+    Expression<bool> Function($$AppointmentsTableFilterComposer f) f,
+  ) {
+    final $$AppointmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.appointments,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AppointmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.appointments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PregnanciesTableOrderingComposer
@@ -4117,6 +4966,31 @@ class $$PregnanciesTableOrderingComposer
 
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get babyName => $composableBuilder(
+    column: $table.babyName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deliveryDate => $composableBuilder(
+    column: $table.deliveryDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get babyWeightGrams => $composableBuilder(
+    column: $table.babyWeightGrams,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get babyGender => $composableBuilder(
+    column: $table.babyGender,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4169,11 +5043,157 @@ class $$PregnanciesTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
+  GeneratedColumn<String> get babyName =>
+      $composableBuilder(column: $table.babyName, builder: (column) => column);
+
+  GeneratedColumn<int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get deliveryDate => $composableBuilder(
+    column: $table.deliveryDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get babyWeightGrams => $composableBuilder(
+    column: $table.babyWeightGrams,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get babyGender => $composableBuilder(
+    column: $table.babyGender,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> visitsRefs<T extends Object>(
+    Expression<T> Function($$VisitsTableAnnotationComposer a) f,
+  ) {
+    final $$VisitsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> medicationsRefs<T extends Object>(
+    Expression<T> Function($$MedicationsTableAnnotationComposer a) f,
+  ) {
+    final $$MedicationsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.medications,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MedicationsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.medications,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> labResultsRefs<T extends Object>(
+    Expression<T> Function($$LabResultsTableAnnotationComposer a) f,
+  ) {
+    final $$LabResultsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.labResults,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LabResultsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.labResults,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> ultrasoundImagesRefs<T extends Object>(
+    Expression<T> Function($$UltrasoundImagesTableAnnotationComposer a) f,
+  ) {
+    final $$UltrasoundImagesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ultrasoundImages,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UltrasoundImagesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ultrasoundImages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> appointmentsRefs<T extends Object>(
+    Expression<T> Function($$AppointmentsTableAnnotationComposer a) f,
+  ) {
+    final $$AppointmentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.appointments,
+      getReferencedColumn: (t) => t.pregnancyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AppointmentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.appointments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PregnanciesTableTableManager
@@ -4187,12 +5207,15 @@ class $$PregnanciesTableTableManager
           $$PregnanciesTableAnnotationComposer,
           $$PregnanciesTableCreateCompanionBuilder,
           $$PregnanciesTableUpdateCompanionBuilder,
-          (
-            Pregnancy,
-            BaseReferences<_$AppDatabase, $PregnanciesTable, Pregnancy>,
-          ),
+          (Pregnancy, $$PregnanciesTableReferences),
           Pregnancy,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool visitsRefs,
+            bool medicationsRefs,
+            bool labResultsRefs,
+            bool ultrasoundImagesRefs,
+            bool appointmentsRefs,
+          })
         > {
   $$PregnanciesTableTableManager(_$AppDatabase db, $PregnanciesTable table)
     : super(
@@ -4214,6 +5237,11 @@ class $$PregnanciesTableTableManager
                 Value<String?> doctorName = const Value.absent(),
                 Value<String?> hospitalName = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> babyName = const Value.absent(),
+                Value<int> status = const Value.absent(),
+                Value<int?> deliveryDate = const Value.absent(),
+                Value<int?> babyWeightGrams = const Value.absent(),
+                Value<String?> babyGender = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -4225,6 +5253,11 @@ class $$PregnanciesTableTableManager
                 doctorName: doctorName,
                 hospitalName: hospitalName,
                 notes: notes,
+                babyName: babyName,
+                status: status,
+                deliveryDate: deliveryDate,
+                babyWeightGrams: babyWeightGrams,
+                babyGender: babyGender,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -4238,6 +5271,11 @@ class $$PregnanciesTableTableManager
                 Value<String?> doctorName = const Value.absent(),
                 Value<String?> hospitalName = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String?> babyName = const Value.absent(),
+                Value<int> status = const Value.absent(),
+                Value<int?> deliveryDate = const Value.absent(),
+                Value<int?> babyWeightGrams = const Value.absent(),
+                Value<String?> babyGender = const Value.absent(),
                 required int createdAt,
                 required int updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -4249,14 +5287,152 @@ class $$PregnanciesTableTableManager
                 doctorName: doctorName,
                 hospitalName: hospitalName,
                 notes: notes,
+                babyName: babyName,
+                status: status,
+                deliveryDate: deliveryDate,
+                babyWeightGrams: babyWeightGrams,
+                babyGender: babyGender,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PregnanciesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                visitsRefs = false,
+                medicationsRefs = false,
+                labResultsRefs = false,
+                ultrasoundImagesRefs = false,
+                appointmentsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (visitsRefs) db.visits,
+                    if (medicationsRefs) db.medications,
+                    if (labResultsRefs) db.labResults,
+                    if (ultrasoundImagesRefs) db.ultrasoundImages,
+                    if (appointmentsRefs) db.appointments,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (visitsRefs)
+                        await $_getPrefetchedData<
+                          Pregnancy,
+                          $PregnanciesTable,
+                          Visit
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PregnanciesTableReferences
+                              ._visitsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PregnanciesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).visitsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pregnancyId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (medicationsRefs)
+                        await $_getPrefetchedData<
+                          Pregnancy,
+                          $PregnanciesTable,
+                          Medication
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PregnanciesTableReferences
+                              ._medicationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PregnanciesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).medicationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pregnancyId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (labResultsRefs)
+                        await $_getPrefetchedData<
+                          Pregnancy,
+                          $PregnanciesTable,
+                          LabResult
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PregnanciesTableReferences
+                              ._labResultsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PregnanciesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).labResultsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pregnancyId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (ultrasoundImagesRefs)
+                        await $_getPrefetchedData<
+                          Pregnancy,
+                          $PregnanciesTable,
+                          UltrasoundImage
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PregnanciesTableReferences
+                              ._ultrasoundImagesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PregnanciesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).ultrasoundImagesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pregnancyId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (appointmentsRefs)
+                        await $_getPrefetchedData<
+                          Pregnancy,
+                          $PregnanciesTable,
+                          Appointment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PregnanciesTableReferences
+                              ._appointmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PregnanciesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).appointmentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.pregnancyId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -4271,13 +5447,20 @@ typedef $$PregnanciesTableProcessedTableManager =
       $$PregnanciesTableAnnotationComposer,
       $$PregnanciesTableCreateCompanionBuilder,
       $$PregnanciesTableUpdateCompanionBuilder,
-      (Pregnancy, BaseReferences<_$AppDatabase, $PregnanciesTable, Pregnancy>),
+      (Pregnancy, $$PregnanciesTableReferences),
       Pregnancy,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool visitsRefs,
+        bool medicationsRefs,
+        bool labResultsRefs,
+        bool ultrasoundImagesRefs,
+        bool appointmentsRefs,
+      })
     >;
 typedef $$VisitsTableCreateCompanionBuilder =
     VisitsCompanion Function({
       required String id,
+      required String pregnancyId,
       required int visitDate,
       Value<double?> weightKg,
       Value<int?> bloodPressureSystolic,
@@ -4287,6 +5470,7 @@ typedef $$VisitsTableCreateCompanionBuilder =
       Value<int?> nextAppointmentDate,
       Value<String?> nextAppointmentNotes,
       Value<int?> pregnancyWeekAtVisit,
+      Value<int?> mood,
       required int createdAt,
       required int updatedAt,
       Value<int> rowid,
@@ -4294,6 +5478,7 @@ typedef $$VisitsTableCreateCompanionBuilder =
 typedef $$VisitsTableUpdateCompanionBuilder =
     VisitsCompanion Function({
       Value<String> id,
+      Value<String> pregnancyId,
       Value<int> visitDate,
       Value<double?> weightKg,
       Value<int?> bloodPressureSystolic,
@@ -4303,6 +5488,7 @@ typedef $$VisitsTableUpdateCompanionBuilder =
       Value<int?> nextAppointmentDate,
       Value<String?> nextAppointmentNotes,
       Value<int?> pregnancyWeekAtVisit,
+      Value<int?> mood,
       Value<int> createdAt,
       Value<int> updatedAt,
       Value<int> rowid,
@@ -4311,6 +5497,25 @@ typedef $$VisitsTableUpdateCompanionBuilder =
 final class $$VisitsTableReferences
     extends BaseReferences<_$AppDatabase, $VisitsTable, Visit> {
   $$VisitsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PregnanciesTable _pregnancyIdTable(_$AppDatabase db) =>
+      db.pregnancies.createAlias(
+        $_aliasNameGenerator(db.visits.pregnancyId, db.pregnancies.id),
+      );
+
+  $$PregnanciesTableProcessedTableManager get pregnancyId {
+    final $_column = $_itemColumn<String>('pregnancy_id')!;
+
+    final manager = $$PregnanciesTableTableManager(
+      $_db,
+      $_db.pregnancies,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_pregnancyIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static MultiTypedResultKey<$MedicationsTable, List<Medication>>
   _medicationsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
@@ -4428,6 +5633,11 @@ class $$VisitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -4437,6 +5647,29 @@ class $$VisitsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PregnanciesTableFilterComposer get pregnancyId {
+    final $$PregnanciesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableFilterComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> medicationsRefs(
     Expression<bool> Function($$MedicationsTableFilterComposer f) f,
@@ -4573,6 +5806,11 @@ class $$VisitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get mood => $composableBuilder(
+    column: $table.mood,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -4582,6 +5820,29 @@ class $$VisitsTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$PregnanciesTableOrderingComposer get pregnancyId {
+    final $$PregnanciesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableOrderingComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$VisitsTableAnnotationComposer
@@ -4637,11 +5898,37 @@ class $$VisitsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get mood =>
+      $composableBuilder(column: $table.mood, builder: (column) => column);
+
   GeneratedColumn<int> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$PregnanciesTableAnnotationComposer get pregnancyId {
+    final $$PregnanciesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<T> medicationsRefs<T extends Object>(
     Expression<T> Function($$MedicationsTableAnnotationComposer a) f,
@@ -4733,6 +6020,7 @@ class $$VisitsTableTableManager
           (Visit, $$VisitsTableReferences),
           Visit,
           PrefetchHooks Function({
+            bool pregnancyId,
             bool medicationsRefs,
             bool labResultsRefs,
             bool ultrasoundImagesRefs,
@@ -4752,6 +6040,7 @@ class $$VisitsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> pregnancyId = const Value.absent(),
                 Value<int> visitDate = const Value.absent(),
                 Value<double?> weightKg = const Value.absent(),
                 Value<int?> bloodPressureSystolic = const Value.absent(),
@@ -4761,11 +6050,13 @@ class $$VisitsTableTableManager
                 Value<int?> nextAppointmentDate = const Value.absent(),
                 Value<String?> nextAppointmentNotes = const Value.absent(),
                 Value<int?> pregnancyWeekAtVisit = const Value.absent(),
+                Value<int?> mood = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => VisitsCompanion(
                 id: id,
+                pregnancyId: pregnancyId,
                 visitDate: visitDate,
                 weightKg: weightKg,
                 bloodPressureSystolic: bloodPressureSystolic,
@@ -4775,6 +6066,7 @@ class $$VisitsTableTableManager
                 nextAppointmentDate: nextAppointmentDate,
                 nextAppointmentNotes: nextAppointmentNotes,
                 pregnancyWeekAtVisit: pregnancyWeekAtVisit,
+                mood: mood,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -4782,6 +6074,7 @@ class $$VisitsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                required String pregnancyId,
                 required int visitDate,
                 Value<double?> weightKg = const Value.absent(),
                 Value<int?> bloodPressureSystolic = const Value.absent(),
@@ -4791,11 +6084,13 @@ class $$VisitsTableTableManager
                 Value<int?> nextAppointmentDate = const Value.absent(),
                 Value<String?> nextAppointmentNotes = const Value.absent(),
                 Value<int?> pregnancyWeekAtVisit = const Value.absent(),
+                Value<int?> mood = const Value.absent(),
                 required int createdAt,
                 required int updatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => VisitsCompanion.insert(
                 id: id,
+                pregnancyId: pregnancyId,
                 visitDate: visitDate,
                 weightKg: weightKg,
                 bloodPressureSystolic: bloodPressureSystolic,
@@ -4805,6 +6100,7 @@ class $$VisitsTableTableManager
                 nextAppointmentDate: nextAppointmentDate,
                 nextAppointmentNotes: nextAppointmentNotes,
                 pregnancyWeekAtVisit: pregnancyWeekAtVisit,
+                mood: mood,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -4817,6 +6113,7 @@ class $$VisitsTableTableManager
               .toList(),
           prefetchHooksCallback:
               ({
+                pregnancyId = false,
                 medicationsRefs = false,
                 labResultsRefs = false,
                 ultrasoundImagesRefs = false,
@@ -4828,7 +6125,38 @@ class $$VisitsTableTableManager
                     if (labResultsRefs) db.labResults,
                     if (ultrasoundImagesRefs) db.ultrasoundImages,
                   ],
-                  addJoins: null,
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (pregnancyId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.pregnancyId,
+                                    referencedTable: $$VisitsTableReferences
+                                        ._pregnancyIdTable(db),
+                                    referencedColumn: $$VisitsTableReferences
+                                        ._pregnancyIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (medicationsRefs)
@@ -4915,6 +6243,7 @@ typedef $$VisitsTableProcessedTableManager =
       (Visit, $$VisitsTableReferences),
       Visit,
       PrefetchHooks Function({
+        bool pregnancyId,
         bool medicationsRefs,
         bool labResultsRefs,
         bool ultrasoundImagesRefs,
@@ -4923,6 +6252,7 @@ typedef $$VisitsTableProcessedTableManager =
 typedef $$MedicationsTableCreateCompanionBuilder =
     MedicationsCompanion Function({
       required String id,
+      required String pregnancyId,
       required String name,
       Value<String?> dosage,
       required int frequency,
@@ -4940,6 +6270,7 @@ typedef $$MedicationsTableCreateCompanionBuilder =
 typedef $$MedicationsTableUpdateCompanionBuilder =
     MedicationsCompanion Function({
       Value<String> id,
+      Value<String> pregnancyId,
       Value<String> name,
       Value<String?> dosage,
       Value<int> frequency,
@@ -4958,6 +6289,25 @@ typedef $$MedicationsTableUpdateCompanionBuilder =
 final class $$MedicationsTableReferences
     extends BaseReferences<_$AppDatabase, $MedicationsTable, Medication> {
   $$MedicationsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PregnanciesTable _pregnancyIdTable(_$AppDatabase db) =>
+      db.pregnancies.createAlias(
+        $_aliasNameGenerator(db.medications.pregnancyId, db.pregnancies.id),
+      );
+
+  $$PregnanciesTableProcessedTableManager get pregnancyId {
+    final $_column = $_itemColumn<String>('pregnancy_id')!;
+
+    final manager = $$PregnanciesTableTableManager(
+      $_db,
+      $_db.pregnancies,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_pregnancyIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $VisitsTable _visitIdTable(_$AppDatabase db) => db.visits.createAlias(
     $_aliasNameGenerator(db.medications.visitId, db.visits.id),
@@ -5046,6 +6396,29 @@ class $$MedicationsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PregnanciesTableFilterComposer get pregnancyId {
+    final $$PregnanciesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableFilterComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$VisitsTableFilterComposer get visitId {
     final $$VisitsTableFilterComposer composer = $composerBuilder(
@@ -5140,6 +6513,29 @@ class $$MedicationsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  $$PregnanciesTableOrderingComposer get pregnancyId {
+    final $$PregnanciesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableOrderingComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$VisitsTableOrderingComposer get visitId {
     final $$VisitsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -5213,6 +6609,29 @@ class $$MedicationsTableAnnotationComposer
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
+  $$PregnanciesTableAnnotationComposer get pregnancyId {
+    final $$PregnanciesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$VisitsTableAnnotationComposer get visitId {
     final $$VisitsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -5250,7 +6669,7 @@ class $$MedicationsTableTableManager
           $$MedicationsTableUpdateCompanionBuilder,
           (Medication, $$MedicationsTableReferences),
           Medication,
-          PrefetchHooks Function({bool visitId})
+          PrefetchHooks Function({bool pregnancyId, bool visitId})
         > {
   $$MedicationsTableTableManager(_$AppDatabase db, $MedicationsTable table)
     : super(
@@ -5266,6 +6685,7 @@ class $$MedicationsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> pregnancyId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> dosage = const Value.absent(),
                 Value<int> frequency = const Value.absent(),
@@ -5281,6 +6701,7 @@ class $$MedicationsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => MedicationsCompanion(
                 id: id,
+                pregnancyId: pregnancyId,
                 name: name,
                 dosage: dosage,
                 frequency: frequency,
@@ -5298,6 +6719,7 @@ class $$MedicationsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                required String pregnancyId,
                 required String name,
                 Value<String?> dosage = const Value.absent(),
                 required int frequency,
@@ -5313,6 +6735,7 @@ class $$MedicationsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => MedicationsCompanion.insert(
                 id: id,
+                pregnancyId: pregnancyId,
                 name: name,
                 dosage: dosage,
                 frequency: frequency,
@@ -5335,7 +6758,7 @@ class $$MedicationsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({visitId = false}) {
+          prefetchHooksCallback: ({pregnancyId = false, visitId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -5355,6 +6778,19 @@ class $$MedicationsTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (pregnancyId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.pregnancyId,
+                                referencedTable: $$MedicationsTableReferences
+                                    ._pregnancyIdTable(db),
+                                referencedColumn: $$MedicationsTableReferences
+                                    ._pregnancyIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
                     if (visitId) {
                       state =
                           state.withJoin(
@@ -5392,11 +6828,12 @@ typedef $$MedicationsTableProcessedTableManager =
       $$MedicationsTableUpdateCompanionBuilder,
       (Medication, $$MedicationsTableReferences),
       Medication,
-      PrefetchHooks Function({bool visitId})
+      PrefetchHooks Function({bool pregnancyId, bool visitId})
     >;
 typedef $$LabResultsTableCreateCompanionBuilder =
     LabResultsCompanion Function({
       required String id,
+      required String pregnancyId,
       required String title,
       required int type,
       required int testDate,
@@ -5411,6 +6848,7 @@ typedef $$LabResultsTableCreateCompanionBuilder =
 typedef $$LabResultsTableUpdateCompanionBuilder =
     LabResultsCompanion Function({
       Value<String> id,
+      Value<String> pregnancyId,
       Value<String> title,
       Value<int> type,
       Value<int> testDate,
@@ -5426,6 +6864,25 @@ typedef $$LabResultsTableUpdateCompanionBuilder =
 final class $$LabResultsTableReferences
     extends BaseReferences<_$AppDatabase, $LabResultsTable, LabResult> {
   $$LabResultsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PregnanciesTable _pregnancyIdTable(_$AppDatabase db) =>
+      db.pregnancies.createAlias(
+        $_aliasNameGenerator(db.labResults.pregnancyId, db.pregnancies.id),
+      );
+
+  $$PregnanciesTableProcessedTableManager get pregnancyId {
+    final $_column = $_itemColumn<String>('pregnancy_id')!;
+
+    final manager = $$PregnanciesTableTableManager(
+      $_db,
+      $_db.pregnancies,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_pregnancyIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $VisitsTable _visitIdTable(_$AppDatabase db) => db.visits.createAlias(
     $_aliasNameGenerator(db.labResults.visitId, db.visits.id),
@@ -5499,6 +6956,29 @@ class $$LabResultsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PregnanciesTableFilterComposer get pregnancyId {
+    final $$PregnanciesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableFilterComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$VisitsTableFilterComposer get visitId {
     final $$VisitsTableFilterComposer composer = $composerBuilder(
@@ -5578,6 +7058,29 @@ class $$LabResultsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  $$PregnanciesTableOrderingComposer get pregnancyId {
+    final $$PregnanciesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableOrderingComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$VisitsTableOrderingComposer get visitId {
     final $$VisitsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -5642,6 +7145,29 @@ class $$LabResultsTableAnnotationComposer
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
+  $$PregnanciesTableAnnotationComposer get pregnancyId {
+    final $$PregnanciesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$VisitsTableAnnotationComposer get visitId {
     final $$VisitsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -5679,7 +7205,7 @@ class $$LabResultsTableTableManager
           $$LabResultsTableUpdateCompanionBuilder,
           (LabResult, $$LabResultsTableReferences),
           LabResult,
-          PrefetchHooks Function({bool visitId})
+          PrefetchHooks Function({bool pregnancyId, bool visitId})
         > {
   $$LabResultsTableTableManager(_$AppDatabase db, $LabResultsTable table)
     : super(
@@ -5695,6 +7221,7 @@ class $$LabResultsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> pregnancyId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<int> type = const Value.absent(),
                 Value<int> testDate = const Value.absent(),
@@ -5707,6 +7234,7 @@ class $$LabResultsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => LabResultsCompanion(
                 id: id,
+                pregnancyId: pregnancyId,
                 title: title,
                 type: type,
                 testDate: testDate,
@@ -5721,6 +7249,7 @@ class $$LabResultsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                required String pregnancyId,
                 required String title,
                 required int type,
                 required int testDate,
@@ -5733,6 +7262,7 @@ class $$LabResultsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => LabResultsCompanion.insert(
                 id: id,
+                pregnancyId: pregnancyId,
                 title: title,
                 type: type,
                 testDate: testDate,
@@ -5752,7 +7282,7 @@ class $$LabResultsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({visitId = false}) {
+          prefetchHooksCallback: ({pregnancyId = false, visitId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -5772,6 +7302,19 @@ class $$LabResultsTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (pregnancyId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.pregnancyId,
+                                referencedTable: $$LabResultsTableReferences
+                                    ._pregnancyIdTable(db),
+                                referencedColumn: $$LabResultsTableReferences
+                                    ._pregnancyIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
                     if (visitId) {
                       state =
                           state.withJoin(
@@ -5809,11 +7352,12 @@ typedef $$LabResultsTableProcessedTableManager =
       $$LabResultsTableUpdateCompanionBuilder,
       (LabResult, $$LabResultsTableReferences),
       LabResult,
-      PrefetchHooks Function({bool visitId})
+      PrefetchHooks Function({bool pregnancyId, bool visitId})
     >;
 typedef $$UltrasoundImagesTableCreateCompanionBuilder =
     UltrasoundImagesCompanion Function({
       required String id,
+      required String pregnancyId,
       required String imagePath,
       required int imageDate,
       Value<int?> pregnancyWeek,
@@ -5827,6 +7371,7 @@ typedef $$UltrasoundImagesTableCreateCompanionBuilder =
 typedef $$UltrasoundImagesTableUpdateCompanionBuilder =
     UltrasoundImagesCompanion Function({
       Value<String> id,
+      Value<String> pregnancyId,
       Value<String> imagePath,
       Value<int> imageDate,
       Value<int?> pregnancyWeek,
@@ -5846,6 +7391,28 @@ final class $$UltrasoundImagesTableReferences
     super.$_table,
     super.$_typedResult,
   );
+
+  static $PregnanciesTable _pregnancyIdTable(_$AppDatabase db) =>
+      db.pregnancies.createAlias(
+        $_aliasNameGenerator(
+          db.ultrasoundImages.pregnancyId,
+          db.pregnancies.id,
+        ),
+      );
+
+  $$PregnanciesTableProcessedTableManager get pregnancyId {
+    final $_column = $_itemColumn<String>('pregnancy_id')!;
+
+    final manager = $$PregnanciesTableTableManager(
+      $_db,
+      $_db.pregnancies,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_pregnancyIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $VisitsTable _visitIdTable(_$AppDatabase db) => db.visits.createAlias(
     $_aliasNameGenerator(db.ultrasoundImages.visitId, db.visits.id),
@@ -5914,6 +7481,29 @@ class $$UltrasoundImagesTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PregnanciesTableFilterComposer get pregnancyId {
+    final $$PregnanciesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableFilterComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$VisitsTableFilterComposer get visitId {
     final $$VisitsTableFilterComposer composer = $composerBuilder(
@@ -5988,6 +7578,29 @@ class $$UltrasoundImagesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  $$PregnanciesTableOrderingComposer get pregnancyId {
+    final $$PregnanciesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableOrderingComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$VisitsTableOrderingComposer get visitId {
     final $$VisitsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -6049,6 +7662,29 @@ class $$UltrasoundImagesTableAnnotationComposer
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
+  $$PregnanciesTableAnnotationComposer get pregnancyId {
+    final $$PregnanciesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$VisitsTableAnnotationComposer get visitId {
     final $$VisitsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -6086,7 +7722,7 @@ class $$UltrasoundImagesTableTableManager
           $$UltrasoundImagesTableUpdateCompanionBuilder,
           (UltrasoundImage, $$UltrasoundImagesTableReferences),
           UltrasoundImage,
-          PrefetchHooks Function({bool visitId})
+          PrefetchHooks Function({bool pregnancyId, bool visitId})
         > {
   $$UltrasoundImagesTableTableManager(
     _$AppDatabase db,
@@ -6104,6 +7740,7 @@ class $$UltrasoundImagesTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> pregnancyId = const Value.absent(),
                 Value<String> imagePath = const Value.absent(),
                 Value<int> imageDate = const Value.absent(),
                 Value<int?> pregnancyWeek = const Value.absent(),
@@ -6115,6 +7752,7 @@ class $$UltrasoundImagesTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => UltrasoundImagesCompanion(
                 id: id,
+                pregnancyId: pregnancyId,
                 imagePath: imagePath,
                 imageDate: imageDate,
                 pregnancyWeek: pregnancyWeek,
@@ -6128,6 +7766,7 @@ class $$UltrasoundImagesTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                required String pregnancyId,
                 required String imagePath,
                 required int imageDate,
                 Value<int?> pregnancyWeek = const Value.absent(),
@@ -6139,6 +7778,7 @@ class $$UltrasoundImagesTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => UltrasoundImagesCompanion.insert(
                 id: id,
+                pregnancyId: pregnancyId,
                 imagePath: imagePath,
                 imageDate: imageDate,
                 pregnancyWeek: pregnancyWeek,
@@ -6157,7 +7797,7 @@ class $$UltrasoundImagesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({visitId = false}) {
+          prefetchHooksCallback: ({pregnancyId = false, visitId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -6177,6 +7817,21 @@ class $$UltrasoundImagesTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (pregnancyId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.pregnancyId,
+                                referencedTable:
+                                    $$UltrasoundImagesTableReferences
+                                        ._pregnancyIdTable(db),
+                                referencedColumn:
+                                    $$UltrasoundImagesTableReferences
+                                        ._pregnancyIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
                     if (visitId) {
                       state =
                           state.withJoin(
@@ -6216,11 +7871,12 @@ typedef $$UltrasoundImagesTableProcessedTableManager =
       $$UltrasoundImagesTableUpdateCompanionBuilder,
       (UltrasoundImage, $$UltrasoundImagesTableReferences),
       UltrasoundImage,
-      PrefetchHooks Function({bool visitId})
+      PrefetchHooks Function({bool pregnancyId, bool visitId})
     >;
 typedef $$AppointmentsTableCreateCompanionBuilder =
     AppointmentsCompanion Function({
       required String id,
+      required String pregnancyId,
       required int appointmentDate,
       Value<String?> purpose,
       Value<String?> location,
@@ -6235,6 +7891,7 @@ typedef $$AppointmentsTableCreateCompanionBuilder =
 typedef $$AppointmentsTableUpdateCompanionBuilder =
     AppointmentsCompanion Function({
       Value<String> id,
+      Value<String> pregnancyId,
       Value<int> appointmentDate,
       Value<String?> purpose,
       Value<String?> location,
@@ -6246,6 +7903,30 @@ typedef $$AppointmentsTableUpdateCompanionBuilder =
       Value<int> updatedAt,
       Value<int> rowid,
     });
+
+final class $$AppointmentsTableReferences
+    extends BaseReferences<_$AppDatabase, $AppointmentsTable, Appointment> {
+  $$AppointmentsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PregnanciesTable _pregnancyIdTable(_$AppDatabase db) =>
+      db.pregnancies.createAlias(
+        $_aliasNameGenerator(db.appointments.pregnancyId, db.pregnancies.id),
+      );
+
+  $$PregnanciesTableProcessedTableManager get pregnancyId {
+    final $_column = $_itemColumn<String>('pregnancy_id')!;
+
+    final manager = $$PregnanciesTableTableManager(
+      $_db,
+      $_db.pregnancies,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_pregnancyIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
 
 class $$AppointmentsTableFilterComposer
     extends Composer<_$AppDatabase, $AppointmentsTable> {
@@ -6305,6 +7986,29 @@ class $$AppointmentsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PregnanciesTableFilterComposer get pregnancyId {
+    final $$PregnanciesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableFilterComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$AppointmentsTableOrderingComposer
@@ -6365,6 +8069,29 @@ class $$AppointmentsTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$PregnanciesTableOrderingComposer get pregnancyId {
+    final $$PregnanciesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableOrderingComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$AppointmentsTableAnnotationComposer
@@ -6413,6 +8140,29 @@ class $$AppointmentsTableAnnotationComposer
 
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$PregnanciesTableAnnotationComposer get pregnancyId {
+    final $$PregnanciesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.pregnancyId,
+      referencedTable: $db.pregnancies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PregnanciesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.pregnancies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$AppointmentsTableTableManager
@@ -6426,12 +8176,9 @@ class $$AppointmentsTableTableManager
           $$AppointmentsTableAnnotationComposer,
           $$AppointmentsTableCreateCompanionBuilder,
           $$AppointmentsTableUpdateCompanionBuilder,
-          (
-            Appointment,
-            BaseReferences<_$AppDatabase, $AppointmentsTable, Appointment>,
-          ),
+          (Appointment, $$AppointmentsTableReferences),
           Appointment,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool pregnancyId})
         > {
   $$AppointmentsTableTableManager(_$AppDatabase db, $AppointmentsTable table)
     : super(
@@ -6447,6 +8194,7 @@ class $$AppointmentsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> pregnancyId = const Value.absent(),
                 Value<int> appointmentDate = const Value.absent(),
                 Value<String?> purpose = const Value.absent(),
                 Value<String?> location = const Value.absent(),
@@ -6459,6 +8207,7 @@ class $$AppointmentsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => AppointmentsCompanion(
                 id: id,
+                pregnancyId: pregnancyId,
                 appointmentDate: appointmentDate,
                 purpose: purpose,
                 location: location,
@@ -6473,6 +8222,7 @@ class $$AppointmentsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                required String pregnancyId,
                 required int appointmentDate,
                 Value<String?> purpose = const Value.absent(),
                 Value<String?> location = const Value.absent(),
@@ -6485,6 +8235,7 @@ class $$AppointmentsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => AppointmentsCompanion.insert(
                 id: id,
+                pregnancyId: pregnancyId,
                 appointmentDate: appointmentDate,
                 purpose: purpose,
                 location: location,
@@ -6497,9 +8248,54 @@ class $$AppointmentsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AppointmentsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({pregnancyId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (pregnancyId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.pregnancyId,
+                                referencedTable: $$AppointmentsTableReferences
+                                    ._pregnancyIdTable(db),
+                                referencedColumn: $$AppointmentsTableReferences
+                                    ._pregnancyIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -6514,12 +8310,9 @@ typedef $$AppointmentsTableProcessedTableManager =
       $$AppointmentsTableAnnotationComposer,
       $$AppointmentsTableCreateCompanionBuilder,
       $$AppointmentsTableUpdateCompanionBuilder,
-      (
-        Appointment,
-        BaseReferences<_$AppDatabase, $AppointmentsTable, Appointment>,
-      ),
+      (Appointment, $$AppointmentsTableReferences),
       Appointment,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool pregnancyId})
     >;
 
 class $AppDatabaseManager {

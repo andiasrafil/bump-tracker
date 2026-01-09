@@ -3,11 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/helpers/pregnancy_calculator.dart';
 import '../../../../core/helpers/export_helper.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../../widgets/celebration_overlay.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +22,20 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final AppDatabase _db = Get.find<AppDatabase>();
   int _selectedIndex = 0;
+  String? _activePregnancyId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadActivePregnancy();
+  }
+
+  Future<void> _loadActivePregnancy() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _activePregnancyId = prefs.getString(AppConstants.prefActivePregnancyId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +91,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDashboard() {
+    if (_activePregnancyId == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return StreamBuilder<Pregnancy?>(
-      stream: _db.watchActivePregnancy(),
+      stream: _db.watchPregnancyById(_activePregnancyId!),
       builder: (context, snapshot) {
         final pregnancy = snapshot.data;
 
@@ -107,22 +128,71 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
-                Text(
-                  'Hello, Mama!',
-                  style: TextStyle(
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  DateFormat('EEEE, MMMM d').format(DateTime.now()),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.textSecondary,
-                  ),
+                // Header with pregnancy switcher
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hello, Mama!',
+                            style: TextStyle(
+                              fontSize: 28.sp,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          InkWell(
+                            onTap: () => Get.toNamed(AppRoutes.pregnancyList),
+                            borderRadius: BorderRadius.circular(8.r),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4.h),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    pregnancy.babyName ?? 'Current Pregnancy',
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Icon(
+                                    Icons.swap_horiz_rounded,
+                                    size: 16.sp,
+                                    color: AppColors.primary,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Date display
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Text(
+                        DateFormat('MMM d').format(DateTime.now()),
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
                 SizedBox(height: 24.h),
@@ -226,7 +296,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                SizedBox(height: 20.h),
+                SizedBox(height: 16.h),
+
+                // Milestone Card
+                MilestoneCard(currentWeek: weekInfo.weeks),
+
+                SizedBox(height: 16.h),
 
                 // Baby Size Comparison
                 Container(

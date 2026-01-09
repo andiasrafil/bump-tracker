@@ -87,3 +87,100 @@ extension LabResultTypeExtension on LabResultType {
     }
   }
 }
+
+// Mood types for visit tracking
+enum MoodType {
+  happy,
+  tired,
+  nauseous,
+  anxious,
+  strong,
+  emotional,
+  calm,
+  excited,
+}
+
+extension MoodTypeExtension on MoodType {
+  String get emoji {
+    switch (this) {
+      case MoodType.happy:
+        return '😊';
+      case MoodType.tired:
+        return '😴';
+      case MoodType.nauseous:
+        return '🤢';
+      case MoodType.anxious:
+        return '😰';
+      case MoodType.strong:
+        return '💪';
+      case MoodType.emotional:
+        return '🥹';
+      case MoodType.calm:
+        return '😌';
+      case MoodType.excited:
+        return '🤩';
+    }
+  }
+
+  String get displayName {
+    switch (this) {
+      case MoodType.happy:
+        return 'Happy';
+      case MoodType.tired:
+        return 'Tired';
+      case MoodType.nauseous:
+        return 'Nauseous';
+      case MoodType.anxious:
+        return 'Anxious';
+      case MoodType.strong:
+        return 'Strong';
+      case MoodType.emotional:
+        return 'Emotional';
+      case MoodType.calm:
+        return 'Calm';
+      case MoodType.excited:
+        return 'Excited';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case MoodType.happy:
+        return 'Feeling great today!';
+      case MoodType.tired:
+        return 'Need some rest';
+      case MoodType.nauseous:
+        return 'Morning sickness';
+      case MoodType.anxious:
+        return 'A bit worried';
+      case MoodType.strong:
+        return 'Full of energy!';
+      case MoodType.emotional:
+        return 'Feeling all the feels';
+      case MoodType.calm:
+        return 'Peaceful and relaxed';
+      case MoodType.excited:
+        return 'Can\'t wait!';
+    }
+  }
+}
+
+// Pregnancy status
+enum PregnancyStatus {
+  active,
+  completed,
+  archived,
+}
+
+extension PregnancyStatusExtension on PregnancyStatus {
+  String get displayName {
+    switch (this) {
+      case PregnancyStatus.active:
+        return 'Active';
+      case PregnancyStatus.completed:
+        return 'Completed';
+      case PregnancyStatus.archived:
+        return 'Archived';
+    }
+  }
+}
