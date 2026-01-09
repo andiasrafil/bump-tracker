@@ -97,6 +97,10 @@ class VisitListScreen extends StatelessWidget {
                   ),
                   subtitle: Text(DateFormat('EEEE, MMMM d, y').format(visitDate)),
                   trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Get.toNamed(
+                    AppRoutes.visitDetail,
+                    arguments: visit.id,
+                  ),
                 ),
               );
             },

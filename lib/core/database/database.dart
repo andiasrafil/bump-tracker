@@ -144,6 +144,10 @@ class AppDatabase extends _$AppDatabase {
     return (select(pregnancies)..limit(1)).watchSingleOrNull();
   }
 
+  Future<Pregnancy?> getActivePregnancy() {
+    return (select(pregnancies)..limit(1)).getSingleOrNull();
+  }
+
   Future<int> insertPregnancy(PregnanciesCompanion pregnancy) {
     return into(pregnancies).insert(pregnancy);
   }

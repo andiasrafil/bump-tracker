@@ -5,10 +5,13 @@ import '../feature/onboarding/presentation/page/onboarding_screen.dart';
 import '../feature/home/presentation/page/home_screen.dart';
 import '../feature/visit/presentation/page/visit_list_screen.dart';
 import '../feature/visit/presentation/page/add_visit_screen.dart';
+import '../feature/visit/presentation/page/visit_detail_screen.dart';
+import '../feature/visit/presentation/page/edit_visit_screen.dart';
 import '../feature/medication/presentation/page/medication_list_screen.dart';
 import '../feature/ultrasound/presentation/page/ultrasound_gallery_screen.dart';
 import '../feature/settings/presentation/page/settings_screen.dart';
 import '../feature/statistics/presentation/page/statistics_screen.dart';
+import '../core/database/database.dart';
 
 class AppPages {
   static final pages = [
@@ -31,6 +34,20 @@ class AppPages {
     GetPage(
       name: AppRoutes.addVisit,
       page: () => const AddVisitScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.visitDetail,
+      page: () {
+        final visitId = Get.arguments as String;
+        return VisitDetailScreen(visitId: visitId);
+      },
+    ),
+    GetPage(
+      name: AppRoutes.editVisit,
+      page: () {
+        final visit = Get.arguments as Visit;
+        return EditVisitScreen(visit: visit);
+      },
     ),
     GetPage(
       name: AppRoutes.medications,

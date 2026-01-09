@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/helpers/pregnancy_calculator.dart';
+import '../../../../core/helpers/export_helper.dart';
 import '../../../../routes/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -469,21 +470,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildVisitCard(Visit visit, DateTime visitDate) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
+    return GestureDetector(
+      onTap: () => Get.toNamed(AppRoutes.visitDetail, arguments: visit.id),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
         children: [
           Container(
             width: 50.w,
@@ -565,6 +568,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -681,9 +685,10 @@ class VisitListContent extends StatelessWidget {
                   ),
                   subtitle: Text(DateFormat('EEEE, MMMM d, y').format(visitDate)),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    // Navigate to visit detail
-                  },
+                  onTap: () => Get.toNamed(
+                    AppRoutes.visitDetail,
+                    arguments: visit.id,
+                  ),
                 ),
               );
             },
@@ -844,8 +849,76 @@ class MedicationListContent extends StatelessWidget {
   }
 }
 
-class SettingsContent extends StatelessWidget {
+class SettingsContent extends StatefulWidget {
   const SettingsContent({super.key});
+
+  @override
+  State<SettingsContent> createState() => _SettingsContentState();
+}
+
+class _SettingsContentState extends State<SettingsContent> {
+  bool _isExporting = false;
+
+  Future<void> _exportData() async {
+    setState(() => _isExporting = true);
+
+    try {
+      final db = Get.find<AppDatabase>();
+      await ExportHelper.shareExport(db);
+      Get.snackbar(
+        'Success',
+        'Data exported successfully',
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to export data: $e',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      setState(() => _isExporting = false);
+    }
+  }
+
+  void _showAboutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('About BumpTracker'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Version 1.0.0',
+              style: TextStyle(fontSize: 14.sp),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'BumpTracker helps you track your pregnancy journey by logging hospital visits, measurements, and important milestones.',
+              style: TextStyle(fontSize: 14.sp, color: AppColors.textSecondary),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'All your data is stored locally on your device.',
+              style: TextStyle(fontSize: 12.sp, color: AppColors.textHint),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -876,11 +949,17 @@ class SettingsContent extends StatelessWidget {
           SizedBox(height: 12.h),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.file_download),
+              leading: _isExporting
+                  ? SizedBox(
+                      width: 24.w,
+                      height: 24.w,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.file_download),
               title: const Text('Export Data'),
               subtitle: const Text('Export your pregnancy data to JSON'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+              trailing: _isExporting ? null : const Icon(Icons.chevron_right),
+              onTap: _isExporting ? null : _exportData,
             ),
           ),
           SizedBox(height: 12.h),
@@ -890,7 +969,7 @@ class SettingsContent extends StatelessWidget {
               title: const Text('About'),
               subtitle: const Text('BumpTracker v1.0.0'),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+              onTap: _showAboutDialog,
             ),
           ),
         ],
