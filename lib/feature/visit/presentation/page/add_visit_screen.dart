@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/helpers/pregnancy_calculator.dart';
+import '../../../../core/helpers/file_helper.dart';
 
 class AddVisitScreen extends StatefulWidget {
   const AddVisitScreen({super.key});
@@ -30,6 +32,9 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
 
   DateTime? _nextAppointmentDate;
   final _nextAppointmentNotesController = TextEditingController();
+
+  // Ultrasound images
+  final List<File> _selectedImages = [];
 
   bool _isLoading = false;
   int? _currentPregnancyWeek;
@@ -104,6 +109,56 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take Photo'),
+              onTap: () async {
+                Navigator.pop(context);
+                final image = await FileHelper.pickImageFromCamera();
+                if (image != null) {
+                  setState(() => _selectedImages.add(image));
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from Gallery'),
+              onTap: () async {
+                Navigator.pop(context);
+                final image = await FileHelper.pickImageFromGallery();
+                if (image != null) {
+                  setState(() => _selectedImages.add(image));
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose Multiple'),
+              onTap: () async {
+                Navigator.pop(context);
+                final images = await FileHelper.pickMultipleImages();
+                if (images.isNotEmpty) {
+                  setState(() => _selectedImages.addAll(images));
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _removeImage(int index) {
+    setState(() => _selectedImages.removeAt(index));
+  }
+
   Future<void> _saveVisit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -112,9 +167,11 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
     try {
       final uuid = const Uuid();
       final now = DateTime.now().millisecondsSinceEpoch;
+      final visitId = uuid.v4();
 
+      // Save the visit
       await _db.insertVisit(VisitsCompanion(
-        id: drift.Value(uuid.v4()),
+        id: drift.Value(visitId),
         visitDate: drift.Value(_visitDate.millisecondsSinceEpoch),
         weightKg: drift.Value(_weightController.text.isNotEmpty
             ? double.tryParse(_weightController.text)
@@ -140,6 +197,20 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
         createdAt: drift.Value(now),
         updatedAt: drift.Value(now),
       ));
+
+      // Save ultrasound images
+      for (final image in _selectedImages) {
+        final savedPath = await FileHelper.saveUltrasoundImage(image);
+        await _db.insertUltrasound(UltrasoundImagesCompanion(
+          id: drift.Value(uuid.v4()),
+          imagePath: drift.Value(savedPath),
+          imageDate: drift.Value(_visitDate.millisecondsSinceEpoch),
+          pregnancyWeek: drift.Value(_currentPregnancyWeek),
+          visitId: drift.Value(visitId),
+          createdAt: drift.Value(now),
+          updatedAt: drift.Value(now),
+        ));
+      }
 
       Get.back();
       Get.snackbar(
@@ -249,10 +320,10 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
               TextFormField(
                 controller: _weightController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Weight (kg)',
                   hintText: 'e.g., 65.5',
-                  prefixIcon: const Icon(Icons.monitor_weight),
+                  prefixIcon: Icon(Icons.monitor_weight),
                   suffixText: 'kg',
                 ),
               ),
@@ -266,10 +337,10 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
                     child: TextFormField(
                       controller: _systolicController,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Systolic',
                         hintText: '120',
-                        prefixIcon: const Icon(Icons.favorite),
+                        prefixIcon: Icon(Icons.favorite),
                       ),
                     ),
                   ),
@@ -283,7 +354,7 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
                     child: TextFormField(
                       controller: _diastolicController,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Diastolic',
                         hintText: '80',
                         suffixText: 'mmHg',
@@ -299,13 +370,151 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
               TextFormField(
                 controller: _heartbeatController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Baby Heartbeat',
                   hintText: 'e.g., 145',
-                  prefixIcon: const Icon(Icons.favorite_border),
+                  prefixIcon: Icon(Icons.favorite_border),
                   suffixText: 'bpm',
                 ),
               ),
+
+              SizedBox(height: 24.h),
+
+              // Ultrasound Images Section
+              _buildSectionTitle('Ultrasound Images'),
+              SizedBox(height: 12.h),
+
+              // Image picker and preview
+              if (_selectedImages.isEmpty)
+                InkWell(
+                  onTap: _pickImage,
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: Container(
+                    width: double.infinity,
+                    height: 120.h,
+                    decoration: BoxDecoration(
+                      color: AppColors.inputBackground,
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: AppColors.primaryLight,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add_photo_alternate_outlined,
+                          size: 40.sp,
+                          color: AppColors.primary,
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'Add ultrasound images',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 120.h,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _selectedImages.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == _selectedImages.length) {
+                            // Add more button
+                            return Padding(
+                              padding: EdgeInsets.only(right: 8.w),
+                              child: InkWell(
+                                onTap: _pickImage,
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: Container(
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.inputBackground,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    border: Border.all(
+                                      color: AppColors.primaryLight,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        size: 32.sp,
+                                        color: AppColors.primary,
+                                      ),
+                                      Text(
+                                        'Add more',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Padding(
+                            padding: EdgeInsets.only(right: 8.w),
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  child: Image.file(
+                                    _selectedImages[index],
+                                    width: 100.w,
+                                    height: 120.h,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: GestureDetector(
+                                    onTap: () => _removeImage(index),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.error,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 16.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      '${_selectedImages.length} image(s) selected',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
 
               SizedBox(height: 24.h),
 
@@ -315,7 +524,7 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
               TextFormField(
                 controller: _notesController,
                 maxLines: 4,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Add any notes about this visit...',
                   alignLabelWithHint: true,
                 ),
@@ -361,7 +570,7 @@ class _AddVisitScreenState extends State<AddVisitScreen> {
                 SizedBox(height: 12.h),
                 TextFormField(
                   controller: _nextAppointmentNotesController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Notes for next appointment...',
                   ),
                 ),

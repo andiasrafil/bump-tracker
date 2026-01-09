@@ -8,6 +8,7 @@ import '../feature/visit/presentation/page/add_visit_screen.dart';
 import '../feature/medication/presentation/page/medication_list_screen.dart';
 import '../feature/ultrasound/presentation/page/ultrasound_gallery_screen.dart';
 import '../feature/settings/presentation/page/settings_screen.dart';
+import '../feature/statistics/presentation/page/statistics_screen.dart';
 
 class AppPages {
   static final pages = [
@@ -42,6 +43,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.settings,
       page: () => const SettingsScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.statistics,
+      page: () => const StatisticsScreen(),
     ),
   ];
 }

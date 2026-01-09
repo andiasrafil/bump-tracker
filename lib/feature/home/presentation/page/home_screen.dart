@@ -856,6 +856,16 @@ class SettingsContent extends StatelessWidget {
         children: [
           Card(
             child: ListTile(
+              leading: const Icon(Icons.bar_chart),
+              title: const Text('Statistics'),
+              subtitle: const Text('View weight, BP, and heartbeat trends'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Get.toNamed(AppRoutes.statistics),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          Card(
+            child: ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Pregnancy Profile'),
               subtitle: const Text('View and edit your pregnancy details'),
